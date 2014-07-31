@@ -1,0 +1,30 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts" x:Class="View.MainWindow"
+        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+    <Grid>
+
+        <dxc:ChartControl HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+            <dxc:ChartControl.Diagram>
+                <dxc:XYDiagram2D Name="diag">
+                    <dxc:XYDiagram2D.Series>
+                        <dxc:LineSeries2D Name="seriePoints"  >
+                            <dxc:LineSeries2D.Label>
+                                <dxc:SeriesLabel Visible="False"/>
+                            </dxc:LineSeries2D.Label>
+
+                        </dxc:LineSeries2D>
+                        <dxc:LineSeries2D Name="serieRank"  >
+                            <dxc:LineSeries2D.Label>
+                                <dxc:SeriesLabel Visible="False"/>
+                            </dxc:LineSeries2D.Label>
+
+                        </dxc:LineSeries2D>
+                    </dxc:XYDiagram2D.Series>
+                </dxc:XYDiagram2D>
+            </dxc:ChartControl.Diagram>
+        </dxc:ChartControl>
+
+    </Grid>
+</Window>
