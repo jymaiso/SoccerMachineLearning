@@ -37,8 +37,8 @@ namespace TestSoc
 
 
 
-            RunSimpleExport();
-            //RunSimplePrediction();
+            //RunSimpleExport();
+            RunSimplePrediction();
 
             Console.ReadKey();
 
@@ -200,48 +200,73 @@ namespace TestSoc
                 var confront2 = Cache.Instance.Games.Where(a => a.Team1 == team2 && a.Team2 == team1).Where(a => a.Date < game.Date).ToList();
 
                 var confronts = confront1.Union(confront2);
-                var recentConfronts = confronts.OrderByDescending(a => a.Date).Take(3);
-                double countConfront = recentConfronts.Count();
 
-                double confVictoRatioTeam1 = countConfront == 0 ? 0 : recentConfronts.Count(a => a.Winner == team1) / countConfront;
-                double confVictoRatioTeam2 = countConfront == 0 ? 0 : recentConfronts.Count(a => a.Winner == team2) / countConfront;
-                double confTieRatio = countConfront == 0 ? 0 : recentConfronts.Count(a => a.Winner == null) / countConfront;
+                var recentConfronts10 = confronts.OrderByDescending(a => a.Date).Take(10);
+                double countConfront10 = recentConfronts10.Count();
+                double confVictoRatioTeam1_10 = countConfront10 == 0 ? 0 : recentConfronts10.Count(a => a.Winner == team1) / countConfront10;
+                double confVictoRatioTeam2_10 = countConfront10 == 0 ? 0 : recentConfronts10.Count(a => a.Winner == team2) / countConfront10;
+                double confTieRatio_10 = countConfront10 == 0 ? 0 : recentConfronts10.Count(a => a.Winner == null) / countConfront10;
+
+                var recentConfronts5 = confronts.OrderByDescending(a => a.Date).Take(5);
+                double countConfront5 = recentConfronts5.Count();
+                double confVictoRatioTeam1_5 = countConfront5 == 0 ? 0 : recentConfronts5.Count(a => a.Winner == team1) / countConfront5;
+                double confVictoRatioTeam2_5 = countConfront5 == 0 ? 0 : recentConfronts5.Count(a => a.Winner == team2) / countConfront5;
+                double confTieRatio_5 = countConfront5 == 0 ? 0 : recentConfronts5.Count(a => a.Winner == null) / countConfront5;
+
+                var recentConfronts2 = confronts.OrderByDescending(a => a.Date).Take(2);
+                double countConfront2 = recentConfronts2.Count();
+                double confVictoRatioTeam1_2 = countConfront2 == 0 ? 0 : recentConfronts2.Count(a => a.Winner == team1) / countConfront2;
+                double confVictoRatioTeam2_2 = countConfront2 == 0 ? 0 : recentConfronts2.Count(a => a.Winner == team2) / countConfront2;
+                double confTieRatio_2 = countConfront2 == 0 ? 0 : recentConfronts2.Count(a => a.Winner == null) / countConfront2;
 
 
-                var teamRecentGame1 = team1.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(10).ToList();
-                double countteamRecentGame1 = teamRecentGame1.Count();
-                var teamRecentGame2 = team2.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(10).ToList();
-                double countteamRecentGame2 = teamRecentGame2.Count();
+                var teamRecentGame1_5 = team1.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(5).ToList();
+                double countteamRecentGame1_5 = teamRecentGame1_5.Count();
+                double indVictoRatioTeam1_5 = countteamRecentGame1_5 == 0 ? 0 : teamRecentGame1_5.Count(a => a.Winner == team1) / countteamRecentGame1_5;
+                double indLooseRatioTeam1_5 = countteamRecentGame1_5 == 0 ? 0 : teamRecentGame1_5.Count(a => a.Winner != null && a.Winner != team1) / countteamRecentGame1_5;
+                double indTieRatio1_5 = countteamRecentGame1_5 == 0 ? 0 : teamRecentGame1_5.Count(a => a.Winner == null) / countteamRecentGame1_5;
 
-                double indVictoRatioTeam1 = countteamRecentGame1 == 0 ? 0 : teamRecentGame1.Count(a => a.Winner == team1) / countteamRecentGame1;
-                double indLooseRatioTeam1 = countteamRecentGame1 == 0 ? 0 : teamRecentGame1.Count(a => a.Winner != null && a.Winner != team1) / countteamRecentGame1;
-                double indTieRatio1 = countteamRecentGame1 == 0 ? 0 : teamRecentGame1.Count(a => a.Winner == null) / countteamRecentGame1;
+                var teamRecentGame1_10 = team1.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(10).ToList();
+                double countteamRecentGame1_10 = teamRecentGame1_10.Count();
+                double indVictoRatioTeam1_10 = countteamRecentGame1_10 == 0 ? 0 : teamRecentGame1_10.Count(a => a.Winner == team1) / countteamRecentGame1_10;
+                double indLooseRatioTeam1_10 = countteamRecentGame1_10 == 0 ? 0 : teamRecentGame1_10.Count(a => a.Winner != null && a.Winner != team1) / countteamRecentGame1_10;
+                double indTieRatio1_10 = countteamRecentGame1_10 == 0 ? 0 : teamRecentGame1_10.Count(a => a.Winner == null) / countteamRecentGame1_10;
 
-                double indVictoRatioTeam2 = countteamRecentGame2 == 0 ? 0 : teamRecentGame2.Count(a => a.Winner == team2) / countteamRecentGame2;
-                double indLooseRatioTeam2 = countteamRecentGame2 == 0 ? 0 : teamRecentGame2.Count(a => a.Winner != null && a.Winner != team2) / countteamRecentGame2;
-                double indTieRatio2 = countteamRecentGame2 == 0 ? 0 : teamRecentGame2.Count(a => a.Winner == null) / countteamRecentGame2;
 
-                double score1 = confVictoRatioTeam1 / 2 + indVictoRatioTeam1 - indLooseRatioTeam1;
-                double score2 = confVictoRatioTeam2 / 2 + indVictoRatioTeam2 - indLooseRatioTeam2;
-                double tieScore = confTieRatio + indTieRatio1 + indTieRatio2;
+                var teamRecentGame2_5 = team2.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(5).ToList();
+                double countteamRecentGame2_5 = teamRecentGame2_5.Count();
+                double indVictoRatioTeam2_5 = countteamRecentGame2_5 == 0 ? 0 : teamRecentGame2_5.Count(a => a.Winner == team2) / countteamRecentGame2_5;
+                double indLooseRatioTeam2_5 = countteamRecentGame2_5 == 0 ? 0 : teamRecentGame2_5.Count(a => a.Winner != null && a.Winner != team2) / countteamRecentGame2_5;
+                double indTieRatio2_5 = countteamRecentGame2_5 == 0 ? 0 : teamRecentGame2_5.Count(a => a.Winner == null) / countteamRecentGame2_5;
+
+                var teamRecentGame2_10 = team2.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(10).ToList();
+                double countteamRecentGame2_10 = teamRecentGame2_10.Count();
+                double indVictoRatioTeam2_10 = countteamRecentGame2_10 == 0 ? 0 : teamRecentGame2_10.Count(a => a.Winner == team2) / countteamRecentGame2_10;
+                double indLooseRatioTeam2_10 = countteamRecentGame2_10 == 0 ? 0 : teamRecentGame2_10.Count(a => a.Winner != null && a.Winner != team2) / countteamRecentGame2_10;
+                double indTieRatio2_10 = countteamRecentGame2_10 == 0 ? 0 : teamRecentGame2_10.Count(a => a.Winner == null) / countteamRecentGame2_10;
+
+
+
+
+
+                double score1 = (confVictoRatioTeam1_10 + confVictoRatioTeam1_5 + confVictoRatioTeam1_2) / 3 + (indVictoRatioTeam1_5 + indVictoRatioTeam1_10) / 2;
+                double score2 = (confVictoRatioTeam2_10 + confVictoRatioTeam2_5 + confVictoRatioTeam2_2) / 3 + (indVictoRatioTeam2_5 + indVictoRatioTeam2_10) / 2;
 
                 Result predResult;
-                //Console.WriteLine(Math.Abs(score1 - score2));
-                if (Math.Abs(score1 - score2) < 0.5 && tieScore > 0.9)
-                    predResult = Result.Tie;
-                else
-                    if (score1 - score2 > -0.2)
+
+                Console.WriteLine(Math.Abs(score1 - score2));
+
+                if (Math.Abs(score1 - score2) > 0.5)
+                {
+                    if (score1 + 0.5 > score2)
                         predResult = Result.T1;
                     else
                         predResult = Result.T2;
-
-                predResults.Add(new Tuple<Result, Result>(predResult, game.Result));
+                    predResults.Add(new Tuple<Result, Result>(predResult, game.Result));
+                }
             }
 
-            var tieRatio = Cache.Instance.Games.Where(a => a.Result == Result.Tie).Count() / (double)Cache.Instance.Games.Count;
-            var predTieRatio = predResults.Count(a => a.Item1 == Result.Tie) / (double)predResults.Count;
-
-
+            Console.WriteLine(predResults.Count);
             Console.WriteLine(predResults.Count(a => a.Item1 == a.Item2) / (double)predResults.Count);
         }
 
