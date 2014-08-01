@@ -24,7 +24,6 @@ C:\Users\jean-yves.ISILAND\Documents\Visual Studio 2012\Projects\TestSoc\TestSoc
 C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\bin\Debug\TestSoc.exe.config
 C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\obj\Debug\TestSoc.exe
 C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\obj\Debug\TestSoc.pdb
-C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\bin\Debug\data.xlsx
 C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\bin\Debug\x64\SQLite.Interop.dll
 C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\bin\Debug\x86\SQLite.Interop.dll
 C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\bin\Debug\TestSoc.exe
@@ -66,3 +65,4 @@ C:\Users\Utilisateur\Documents\GitHub\TestSoc\TestSoc\bin\Debug\EntityFramework.
 C:\Users\Utilisateur\Documents\GitHub\TestSoc\TestSoc\bin\Debug\LinqToExcel.xml
 C:\Users\Utilisateur\Documents\GitHub\TestSoc\TestSoc\bin\Debug\System.Data.SQLite.xml
 C:\Users\Utilisateur\Documents\GitHub\TestSoc\TestSoc\obj\Debug\TestSoc.csprojResolveAssemblyReference.cache
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\bin\Debug\data.xlsx

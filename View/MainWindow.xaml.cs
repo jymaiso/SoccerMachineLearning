@@ -23,9 +23,6 @@ namespace View
     public partial class MainWindow : Window
     {
 
-
-
-
         public MainWindow()
         {
             InitializeComponent();
@@ -36,12 +33,11 @@ namespace View
         {
             Cache.Instance.Go();
 
-            Program.RunSimpleExport();
+            //  Program.RunSimpleExport();
 
-            //var points38 = Cache.Instance.Teams.Where(a => a.Name == "PSG").First().RankHistory.OrderBy(a => a.Date).Select(a => a).ToList();
-
-            //  seriePoints.Points.AddRange (points38.Select(a=>new SeriesPoint(a.Date, (double)a.Points)));
-            //  serieRank.Points.AddRange (points38.Select(a=>new SeriesPoint(a.Date, (double)a.Rank)));
+            var points38 = Cache.Instance.Teams.Where(a => a.Name == "St. Etienne").First().RankHistory.OrderBy(a => a.Date).Select(a => a).ToList();
+            seriePoints.Points.AddRange(points38.Select(a => new SeriesPoint(a.Date, (double)a.Points)));
+            serieRank.Points.AddRange(points38.Select(a => new SeriesPoint(a.Date, (double)a.Rank)));
 
 
             //  this.Points = 

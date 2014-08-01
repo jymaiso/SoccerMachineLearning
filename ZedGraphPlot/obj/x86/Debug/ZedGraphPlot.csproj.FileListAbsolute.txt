@@ -1,0 +1,38 @@
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\bin\Debug\ZedGraphPlot.exe
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\bin\Debug\ZedGraphPlot.pdb
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\bin\Debug\ZedGraph.dll
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.Form1.resources
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.Properties.Resources.resources
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.exe
+C:\Documents and Settings\Cristina - FIT\Desktop\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.pdb
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.exe
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.pdb
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\bin\Debug\ZedGraphPlot.exe
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\bin\Debug\ZedGraphPlot.pdb
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\bin\Debug\ZedGraph.dll
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.csprojResolveAssemblyReference.cache
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.Form1.resources
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.Properties.Resources.resources
+C:\Users\jean-yves.ISILAND\Downloads\ZedGraphPlot\ZedGraphPlot\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.csproj.GenerateResource.Cache
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.exe
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.pdb
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\ZedGraphPlot.exe.config
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\x64\SQLite.Interop.dll
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\x86\SQLite.Interop.dll
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\ZedGraphPlot.exe
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\ZedGraphPlot.pdb
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\TestSoc.exe
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\ZedGraph.dll
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\LinqToExcel.dll
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\Remotion.Data.Linq.dll
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\log4net.dll
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\TestSoc.pdb
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\LinqToExcel.xml
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.csprojResolveAssemblyReference.cache
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.Form1.resources
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.Properties.Resources.resources
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.csproj.GenerateResource.Cache
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\data.xlsx

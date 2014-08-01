@@ -10,22 +10,15 @@ using LinqToExcel;
 
 namespace TestSoc
 {
-   public class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-
-
-
-
-
+            Cache.Instance.Go();
             //RunSimpleExport();
-            // RunSimplePrediction();
-
-
+            RunSimplePrediction();
 
             Console.ReadKey();
-
         }
 
         public static void RunSimpleExport()
@@ -33,13 +26,36 @@ namespace TestSoc
             StringBuilder sb = new StringBuilder();
 
             List<String> labels = new List<string>(){
-                 "p1",
-                 "r1",
-                 "p1",
-                 "r2",
-                    
-                    "game.Result",
+                "ProbTie1",
+                "ProbWin1", 
+                "ProbLoose1", 
+                "ProbHomeTie1",
+                "ProbHomeWin1", 
+                "ProbHomeLoose1",
+                "ProbExtTie1",  
+                "ProbExtWin1",  
+                "ProbExtLoose1", 
+                "ProbTie2",
+                "ProbWin2", 
+                "ProbLoose2", 
+                "ProbHomeTie2",
+                "ProbHomeWin2", 
+                "ProbHomeLoose2",
+                "ProbExtTie2",  
+                "ProbExtWin2",  
+                "ProbExtLoose2", 
+                "game.Result",
             };
+
+            //ProbTie
+            //ProbWin 
+            //ProbLoose 
+            //ProbHomeTie
+            //ProbHomeWin 
+            //ProbHomeLoose
+            //ProbExtTie  
+            //ProbExtWin  
+            //ProbExtLoose 
 
             sb.AppendLine(String.Join(",", labels));
 
@@ -51,37 +67,47 @@ namespace TestSoc
                 Team team1 = game.Team1;
                 Team team2 = game.Team2;
 
-
                 var rank1 = team1.RankHistory.First(a => a.Date == game.Date);
                 var rank2 = team2.RankHistory.First(a => a.Date == game.Date);
 
-
-
-
                 List<String> entry = new List<String>(){
-                rank1.Points.ToString().Replace(",","."),
-                  rank1.Rank.ToString().Replace(",","."),
-                  rank2.Points.ToString().Replace(",","."),
-                  rank2.Rank.ToString().Replace(",","."),
-                    
-                    game.Result.ToString().Replace(",","."),
-            };
+                  
+                     rank1.ProbTie         .TS(),
+                     rank1.ProbWin         .TS(),
+                     rank1.ProbLoose       .TS(),
+                     rank1.ProbHomeTie     .TS(),
+                     rank1.ProbHomeWin     .TS(),
+                     rank1.ProbHomeLoose   .TS(),
+                     rank1.ProbExtTie      .TS(),
+                     rank1.ProbExtWin      .TS(),
+                     rank1.ProbExtLoose    .TS(),
+                                
+                     rank2.ProbTie         .TS(),
+                     rank2.ProbWin         .TS(),
+                     rank2.ProbLoose       .TS(),
+                     rank2.ProbHomeTie     .TS(),
+                     rank2.ProbHomeWin     .TS(),
+                     rank2.ProbHomeLoose   .TS(),
+                     rank2.ProbExtTie      .TS(),
+                     rank2.ProbExtWin      .TS(),
+                     rank2.ProbExtLoose    .TS(),
+
+                    game.Result.ToString(),
+                };
 
                 sb.AppendLine(String.Join(",", entry));
-
             }
 
-            string file = Path.Combine(Environment.CurrentDirectory, "data.csv");
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "data.csv");
             File.WriteAllText(file, sb.ToString());
             Process.Start(file);
-
         }
 
         private static void RunSimplePrediction()
         {
             List<Tuple<Result, Result>> predResults = new List<Tuple<Result, Result>>();
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < Cache.Instance.Games.Count - 1000; i++)
             {
                 var index = Cache.Instance.Games.Count - i - 1;
                 var game = Cache.Instance.Games[index];
@@ -89,81 +115,77 @@ namespace TestSoc
                 Team team1 = game.Team1;
                 Team team2 = game.Team2;
 
-                var confront1 = Cache.Instance.Games.Where(a => a.Team1 == team1 && a.Team2 == team2).Where(a => a.Date < game.Date).ToList();
-                var confront2 = Cache.Instance.Games.Where(a => a.Team1 == team2 && a.Team2 == team1).Where(a => a.Date < game.Date).ToList();
-
-                var confronts = confront1.Union(confront2);
-
-                var recentConfronts10 = confronts.OrderByDescending(a => a.Date).Take(10);
-                double countConfront10 = recentConfronts10.Count();
-                double confVictoRatioTeam1_10 = countConfront10 == 0 ? 0 : recentConfronts10.Count(a => a.Winner == team1) / countConfront10;
-                double confVictoRatioTeam2_10 = countConfront10 == 0 ? 0 : recentConfronts10.Count(a => a.Winner == team2) / countConfront10;
-                double confTieRatio_10 = countConfront10 == 0 ? 0 : recentConfronts10.Count(a => a.Winner == null) / countConfront10;
-
-                var recentConfronts5 = confronts.OrderByDescending(a => a.Date).Take(5);
-                double countConfront5 = recentConfronts5.Count();
-                double confVictoRatioTeam1_5 = countConfront5 == 0 ? 0 : recentConfronts5.Count(a => a.Winner == team1) / countConfront5;
-                double confVictoRatioTeam2_5 = countConfront5 == 0 ? 0 : recentConfronts5.Count(a => a.Winner == team2) / countConfront5;
-                double confTieRatio_5 = countConfront5 == 0 ? 0 : recentConfronts5.Count(a => a.Winner == null) / countConfront5;
-
-                var recentConfronts2 = confronts.OrderByDescending(a => a.Date).Take(2);
-                double countConfront2 = recentConfronts2.Count();
-                double confVictoRatioTeam1_2 = countConfront2 == 0 ? 0 : recentConfronts2.Count(a => a.Winner == team1) / countConfront2;
-                double confVictoRatioTeam2_2 = countConfront2 == 0 ? 0 : recentConfronts2.Count(a => a.Winner == team2) / countConfront2;
-                double confTieRatio_2 = countConfront2 == 0 ? 0 : recentConfronts2.Count(a => a.Winner == null) / countConfront2;
-
-
-                var teamRecentGame1_5 = team1.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(5).ToList();
-                double countteamRecentGame1_5 = teamRecentGame1_5.Count();
-                double indVictoRatioTeam1_5 = countteamRecentGame1_5 == 0 ? 0 : teamRecentGame1_5.Count(a => a.Winner == team1) / countteamRecentGame1_5;
-                double indLooseRatioTeam1_5 = countteamRecentGame1_5 == 0 ? 0 : teamRecentGame1_5.Count(a => a.Winner != null && a.Winner != team1) / countteamRecentGame1_5;
-                double indTieRatio1_5 = countteamRecentGame1_5 == 0 ? 0 : teamRecentGame1_5.Count(a => a.Winner == null) / countteamRecentGame1_5;
-
-                var teamRecentGame1_10 = team1.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(10).ToList();
-                double countteamRecentGame1_10 = teamRecentGame1_10.Count();
-                double indVictoRatioTeam1_10 = countteamRecentGame1_10 == 0 ? 0 : teamRecentGame1_10.Count(a => a.Winner == team1) / countteamRecentGame1_10;
-                double indLooseRatioTeam1_10 = countteamRecentGame1_10 == 0 ? 0 : teamRecentGame1_10.Count(a => a.Winner != null && a.Winner != team1) / countteamRecentGame1_10;
-                double indTieRatio1_10 = countteamRecentGame1_10 == 0 ? 0 : teamRecentGame1_10.Count(a => a.Winner == null) / countteamRecentGame1_10;
-
-
-                var teamRecentGame2_5 = team2.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(5).ToList();
-                double countteamRecentGame2_5 = teamRecentGame2_5.Count();
-                double indVictoRatioTeam2_5 = countteamRecentGame2_5 == 0 ? 0 : teamRecentGame2_5.Count(a => a.Winner == team2) / countteamRecentGame2_5;
-                double indLooseRatioTeam2_5 = countteamRecentGame2_5 == 0 ? 0 : teamRecentGame2_5.Count(a => a.Winner != null && a.Winner != team2) / countteamRecentGame2_5;
-                double indTieRatio2_5 = countteamRecentGame2_5 == 0 ? 0 : teamRecentGame2_5.Count(a => a.Winner == null) / countteamRecentGame2_5;
-
-                var teamRecentGame2_10 = team2.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(10).ToList();
-                double countteamRecentGame2_10 = teamRecentGame2_10.Count();
-                double indVictoRatioTeam2_10 = countteamRecentGame2_10 == 0 ? 0 : teamRecentGame2_10.Count(a => a.Winner == team2) / countteamRecentGame2_10;
-                double indLooseRatioTeam2_10 = countteamRecentGame2_10 == 0 ? 0 : teamRecentGame2_10.Count(a => a.Winner != null && a.Winner != team2) / countteamRecentGame2_10;
-                double indTieRatio2_10 = countteamRecentGame2_10 == 0 ? 0 : teamRecentGame2_10.Count(a => a.Winner == null) / countteamRecentGame2_10;
-
-
-
-
-
-                double score1 = (confVictoRatioTeam1_10 + confVictoRatioTeam1_5 + confVictoRatioTeam1_2) / 3 + (indVictoRatioTeam1_5 + indVictoRatioTeam1_10) / 2;
-                double score2 = (confVictoRatioTeam2_10 + confVictoRatioTeam2_5 + confVictoRatioTeam2_2) / 3 + (indVictoRatioTeam2_5 + indVictoRatioTeam2_10) / 2;
+                var rank1 = team1.RankHistory.First(a => a.Date == game.Date);
+                var rank2 = team2.RankHistory.First(a => a.Date == game.Date);
 
                 Result predResult;
 
-                Console.WriteLine(Math.Abs(score1 - score2));
+                var probTie = (rank1.ProbTie + rank2.ProbTie + rank1.ProbHomeTie + rank2.ProbExtTie) / 4;
+                var probWin1 = (rank1.ProbWin + rank1.ProbHomeWin + rank2.ProbExtLoose) / 3;
+                var probWin2 = (rank2.ProbWin + rank2.ProbExtWin + rank1.ProbHomeLoose) / 3;
 
-                if (Math.Abs(score1 - score2) > 0.5)
+                //var probTie = (rank1.ProbHomeTie + rank2.ProbExtTie) / 2;
+                //var probWin1 = (rank1.ProbHomeWin + rank2.ProbExtLoose) / 2;
+                //var probWin2 = (rank2.ProbExtWin + rank1.ProbHomeLoose) / 2;
+
+                //if (probTie >= probWin1 && probTie >= probWin2)
+                //    predResult = Result.Tie;
+                //else if (probWin1 >= probWin2)
+                //    predResult = Result.T1;
+                //else
+                //    predResult = Result.T2;
+
+                //predResults.Add(new Tuple<Result, Result>(predResult, game.Result));
+
+                if (probWin1 > probWin2 * 2)
                 {
-                    if (score1 + 0.5 > score2)
-                        predResult = Result.T1;
-                    else
-                        predResult = Result.T2;
-                    predResults.Add(new Tuple<Result, Result>(predResult, game.Result));
+                    predResults.Add(new Tuple<Result, Result>(Result.T1, game.Result));
                 }
+
+                if (probWin2 > probWin1 * 2)
+                {
+                    predResults.Add(new Tuple<Result, Result>(Result.T2, game.Result));
+                }
+
+                //if (probTie >= probWin1 && probTie >= probWin2)
+                //    predResult = Result.Tie;
+                //else if (probWin1 >= probWin2)
+                //    predResult = Result.T1;
+                //else
+                //    predResult = Result.T2;
+
+              
+
             }
 
-            Console.WriteLine(predResults.Count);
-            Console.WriteLine(predResults.Count(a => a.Item1 == a.Item2) / (double)predResults.Count);
+            Console.WriteLine("Count : " + predResults.Count);
+            Console.WriteLine("Score : " + Math.Round(predResults.Count(a => a.Item1 == a.Item2) / (double)predResults.Count, 2));
+            Console.WriteLine("Score Tie: " + Math.Round(predResults.Where(a => a.Item1 == Result.Tie).Count(a => a.Item1 == a.Item2) / (double)predResults.Where(a => a.Item1 == Result.Tie).Count(), 2));
+            Console.WriteLine("Score T1: " + Math.Round(predResults.Where(a => a.Item1 == Result.T1).Count(a => a.Item1 == a.Item2) / (double)predResults.Where(a => a.Item1 == Result.T1).Count(), 2));
+            Console.WriteLine("Score T2: " + Math.Round(predResults.Where(a => a.Item1 == Result.T2).Count(a => a.Item1 == a.Item2) / (double)predResults.Where(a => a.Item1 == Result.T2).Count(), 2));
+
+            Console.WriteLine();
+            Console.WriteLine("--- Real ---");
+            Console.WriteLine("Tie : " + predResults.Count(a => a.Item2 == Result.Tie));
+            Console.WriteLine("T1 : " + predResults.Count(a => a.Item2 == Result.T1));
+            Console.WriteLine("T2 : " + predResults.Count(a => a.Item2 == Result.T2));
+            Console.WriteLine();
+            Console.WriteLine("--- Prediction ---");
+            Console.WriteLine("Tie : " + predResults.Count(a => a.Item1 == Result.Tie));
+            Console.WriteLine("T1 : " + predResults.Count(a => a.Item1 == Result.T1));
+            Console.WriteLine("T2 : " + predResults.Count(a => a.Item1 == Result.T2));
+
+
+
         }
+    }
 
-
+    public static class Ext
+    {
+        public static String TS(this double num)
+        {
+            return num.ToString().Replace(",", ".");
+        }
     }
 
     public enum Result
@@ -291,6 +313,7 @@ namespace TestSoc
             Cache.Instance.AddGames(file, 2013);
             Cache.Instance.Process();
         }
+
         internal void Process()
         {
             //Re-order
@@ -320,24 +343,58 @@ namespace TestSoc
             int gameCount = 38;
             foreach (var date in dates)
             {
-                List<RankClass> localRanks = new List<RankClass>();
+                List<TeamStats> localRanks = new List<TeamStats>();
                 foreach (var team in Teams)
                 {
-                    var points = scoreTeamsHistory[team].Where(a => a.Key < date).OrderByDescending(a => a.Key).Take(gameCount).Sum(a => a.Value); ;
-                    RankClass rank = new RankClass
+                    var points = scoreTeamsHistory[team].Where(a => a.Key < date).OrderByDescending(a => a.Key).Take(gameCount).Sum(a => a.Value);
+                    var games = team.Games.Where(a => a.Date < date).OrderByDescending(a => a.Date).Take(gameCount).ToList();
+                    var homeGames = games.Where(a => a.Team1 == team).ToList();
+                    var extGames = games.Where(a => a.Team1 != team).ToList();
+
+                    TeamStats rank = new TeamStats
                     {
                         GameCount = gameCount,
                         Date = date,
                         Team = team,
-                        Points = points
+                        Points = points,
+                        ProbTie = games.Count != 0 ? games.Count(a => a.Winner == null) / (double)games.Count : 0,
+                        ProbWin = games.Count != 0 ? games.Count(a => a.Winner == team) / (double)games.Count : 0,
+                        ProbLoose = games.Count != 0 ? games.Count(a => a.Winner != null && a.Winner != team) / (double)games.Count : 0,
+                        ProbHomeTie = homeGames.Count != 0 ? homeGames.Count(a => a.Winner == null) / (double)homeGames.Count : 0,
+                        ProbHomeWin = homeGames.Count != 0 ? homeGames.Count(a => a.Winner == team) / (double)homeGames.Count : 0,
+                        ProbHomeLoose = homeGames.Count != 0 ? homeGames.Count(a => a.Winner != null && a.Winner != team) / (double)homeGames.Count : 0,
+                        ProbExtTie = extGames.Count != 0 ? extGames.Count(a => a.Winner == null) / (double)extGames.Count : 0,
+                        ProbExtWin = extGames.Count != 0 ? extGames.Count(a => a.Winner == team) / (double)extGames.Count : 0,
+                        ProbExtLoose = extGames.Count != 0 ? extGames.Count(a => a.Winner != null && a.Winner != team) / (double)extGames.Count : 0
                     };
                     team.RankHistory.Add(rank);
+                    localRanks.Add(rank);
                 }
+
                 int pos = 1;
-                localRanks.OrderByDescending(a => a.Points).ToList().ForEach(a => a.Rank = pos++);
+                foreach (var item in localRanks.OrderByDescending(a => a.Points).ToList())
+                {
+                    item.Rank = pos++;
+                }
             }
+
+
+            double dataMin = Teams.SelectMany(a => a.RankHistory).Min(a => a.Points);
+            double dataMax = Teams.SelectMany(a => a.RankHistory).Max(a => a.Points);
+            Teams.SelectMany(a => a.RankHistory).ToList().ForEach(a => a.Points = NormalizeData(a.Points, dataMin, dataMax, -1, 1));
+
+            dataMin = Teams.SelectMany(a => a.RankHistory).Min(a => a.Rank);
+            dataMax = Teams.SelectMany(a => a.RankHistory).Max(a => a.Rank);
+            Teams.SelectMany(a => a.RankHistory).ToList().ForEach(a => a.Rank = NormalizeData(a.Rank, dataMin, dataMax, -1, 1));
         }
 
+        private static double NormalizeData(double value, double dataMin, double dataMax, double minBound, double maxBound)
+        {
+            double range = dataMax - dataMin;
+
+            var d1 = (value - dataMin) / range;
+            return (double)((1 - d1) * minBound + d1 * maxBound);
+        }
 
     }
 
@@ -346,13 +403,13 @@ namespace TestSoc
         public String Name { get; set; }
         public List<Game> Games { get; set; }
 
-        public List<RankClass> RankHistory { get; set; }
+        public List<TeamStats> RankHistory { get; set; }
 
 
         public Team()
         {
             Games = new List<Game>();
-            RankHistory = new List<RankClass>();
+            RankHistory = new List<TeamStats>();
         }
     }
 
@@ -388,14 +445,32 @@ namespace TestSoc
 
 
 
-    public class RankClass
+    public class TeamStats
     {
         public int GameCount { get; set; }
-        public int Rank { get; set; }
+        public double Rank { get; set; }
         public Team Team { get; set; }
         public DateTime Date { get; set; }
 
-        public int Points { get; set; }
+        public double Points { get; set; }
+
+        public double ProbTie { get; set; }
+
+        public double ProbWin { get; set; }
+
+        public double ProbLoose { get; set; }
+
+        public double ProbHomeTie { get; set; }
+
+        public double ProbHomeWin { get; set; }
+
+        public double ProbHomeLoose { get; set; }
+
+        public double ProbExtTie { get; set; }
+
+        public double ProbExtWin { get; set; }
+
+        public double ProbExtLoose { get; set; }
     }
 
 }
