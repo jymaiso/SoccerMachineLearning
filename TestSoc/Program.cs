@@ -75,32 +75,34 @@ namespace TestSoc
 
                     if ((probTie >= probWin1 && probTie >= probWin2) || Math.Abs(probWin1 - probWin2) < 0.1)
                     {
+
                         if (quote.Game.Winner == null)
-                            pot += quote.QT;
+                            pot += (quote.QT * pot / 10);
                         else
-                            pot -= 1;
+                            pot -= pot / 10;
 
                         bet++;
                     }
                     else if (probWin1 >= probWin2)
                     {
                         if (quote.Game.Winner == quote.Team1)
-                            pot += quote.Q1;
+                            pot += (quote.Q1* pot / 10);
                         else
-                            pot -= 1;
+                            pot -= pot / 10;
 
                         bet++;
                     }
                     else
                     {
                         if (quote.Game.Winner == quote.Team2)
-                            pot += quote.Q2;
+                            pot += (quote.Q2 * pot / 10);
                         else
-                            pot -= 1;
+                            pot -= pot / 10;
 
                         bet++;
                     }
                 }
+                Console.WriteLine(pot);
             }
 
             Console.WriteLine(qs.Quotes.Count);
