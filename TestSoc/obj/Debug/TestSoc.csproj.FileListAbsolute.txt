@@ -67,3 +67,4 @@ C:\Users\Utilisateur\Documents\GitHub\TestSoc\TestSoc\bin\Debug\System.Data.SQLi
 C:\Users\Utilisateur\Documents\GitHub\TestSoc\TestSoc\obj\Debug\TestSoc.csprojResolveAssemblyReference.cache
 C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\bin\Debug\data.xlsx
 C:\Users\Utilisateur\Documents\GitHub\TestSoc\TestSoc\bin\Debug\data.xlsx
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\TestSoc\bin\Debug\quote.xlsx

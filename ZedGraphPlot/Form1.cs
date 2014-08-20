@@ -36,8 +36,8 @@ namespace ZedGraphPlot
 
             // DisplayProba();
 
-            Cache Cache2 = new TestSoc.Cache();
-            Cache2.Go(new Parameters
+            Model Cache2 = new TestSoc.Model();
+            Cache2.LoadAndProcessData(new Parameters
             {
                 Function = new ConstantFunction(),
                 GameCount = 74,
@@ -50,8 +50,8 @@ namespace ZedGraphPlot
             //DisplayProbaCorrelation(Cache1, "ProbExtWin", "ProbExtWin", (a) => a.ProbExtWin, Color.Black);
             //DisplayProbaCorrelation(Cache1, "ProbExtLoose", "ProbExtLoose", (a) => a.ProbExtLoose, Color.Gray);
 
-            Cache Cache1 = new TestSoc.Cache();
-            Cache1.Go(new Parameters
+            Model Cache1 = new TestSoc.Model();
+            Cache1.LoadAndProcessData(new Parameters
             {
                 Function = new ConstantFunction(),
                 GameCount = 74,
@@ -71,7 +71,7 @@ namespace ZedGraphPlot
             zedGraphControl1.AxisChange();
         }
 
-        private void DisplayProbaCorrelation(Cache Cache0, String label, String property, Func<TeamStats, double> propFunc, Color color)
+        private void DisplayProbaCorrelation(Model Cache0, String label, String property, Func<TeamStats, double> propFunc, Color color)
         {
             PointPairList sV0 = GetSerie(label, color);
             int index = 0;
@@ -110,8 +110,8 @@ namespace ZedGraphPlot
         {
             // ---------------------
 
-            Cache Cache0 = new TestSoc.Cache();
-            Cache0.Go(new Parameters
+            Model Cache0 = new TestSoc.Model();
+            Cache0.LoadAndProcessData(new Parameters
             {
                 Function = new ConstantFunction(),
                 GameCount = 74,
@@ -120,8 +120,8 @@ namespace ZedGraphPlot
 
             int index = DisplayCache(Cache0, "ConstantFunction - true", "PSG", "ProbWin", Color.Red);
 
-            Cache Cache1 = new TestSoc.Cache();
-            Cache1.Go(new Parameters
+            Model Cache1 = new TestSoc.Model();
+            Cache1.LoadAndProcessData(new Parameters
             {
                 Function = new LinearFunction(2),
                 GameCount = 74,
@@ -130,8 +130,8 @@ namespace ZedGraphPlot
 
             DisplayCache(Cache1, "ConstantFunction - false", "PSG", "ProbWin", Color.Blue);
 
-            Cache Cache2 = new TestSoc.Cache();
-            Cache2.Go(new Parameters
+            Model Cache2 = new TestSoc.Model();
+            Cache2.LoadAndProcessData(new Parameters
             {
                 Function = new ExpFunction(),
                 GameCount = 74,
@@ -140,8 +140,8 @@ namespace ZedGraphPlot
 
             DisplayCache(Cache2, "ExpFunction - true", "PSG", "ProbWin", Color.Green);
 
-            Cache Cache3 = new TestSoc.Cache();
-            Cache3.Go(new Parameters
+            Model Cache3 = new TestSoc.Model();
+            Cache3.LoadAndProcessData(new Parameters
             {
                 Function = new LogFunction(),
                 GameCount = 74,
@@ -151,7 +151,7 @@ namespace ZedGraphPlot
             DisplayCache(Cache3, "ExpFunction - false", "PSG", "ProbWin", Color.Black);
         }
 
-        private int DisplayCache(Cache Cache0, String label, String team, String property, Color color)
+        private int DisplayCache(Model Cache0, String label, String team, String property, Color color)
         {
             var date = new DateTime(2000, 06, 01);
             var team0 = Cache0.Teams.Where(a => a.Name == team).First();

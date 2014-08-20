@@ -55,3 +55,4 @@ C:\Users\Utilisateur\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGrap
 C:\Users\Utilisateur\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.Form1.resources
 C:\Users\Utilisateur\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.Properties.Resources.resources
 C:\Users\Utilisateur\Documents\GitHub\TestSoc\ZedGraphPlot\obj\x86\Debug\ZedGraphPlot.csproj.GenerateResource.Cache
+C:\Users\jean-yves.ISILAND\Documents\GitHub\TestSoc\ZedGraphPlot\bin\Debug\quote.xlsx

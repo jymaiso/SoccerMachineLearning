@@ -52,7 +52,7 @@ namespace TestSoc
         {
             if (date.Month > 6)
                 return YearsPlayed.Contains(date.Year);
-            else 
+            else
                 return YearsPlayed.Contains(date.Year - 1);
         }
     }
@@ -165,5 +165,34 @@ namespace TestSoc
         {
             EnableStrongWeakOpposite = true;
         }
+    }
+
+    public class ExcelQuote
+    {
+        public String Date { get; set; }
+        public String Teams { get; set; }
+        public String Q1 { get; set; }
+        public String QT { get; set; }
+        public String Q2 { get; set; }
+    }
+
+    public class Quote
+    {
+        public Team Team1 { get; set; }
+        public Team Team2 { get; set; }
+
+        public double Q1 { get; set; }
+        public double QT { get; set; }
+        public double Q2 { get; set; }
+
+
+        public double R1 { get { return 1 / Q1; } }
+        public double RT { get { return 1 / QT; } }
+        public double R2 { get { return 1 / Q2; } }
+
+
+        public DateTime Date { get; set; }
+
+        public Game Game { get; set; }
     }
 }

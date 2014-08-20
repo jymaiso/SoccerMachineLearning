@@ -12,5 +12,10 @@ namespace TestSoc
         {
             return num.ToString().Replace(",", ".");
         }
+
+        public static double ConvertToDouble(this string num)
+        {
+            return double.Parse(num.Replace(".", ","));
+        }
     }
 }
