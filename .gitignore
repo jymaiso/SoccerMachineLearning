@@ -13,6 +13,9 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+TestSoc/bin/
+obj/
+[Bb]in/
 
 # =========================
 # Operating System Files
@@ -34,3 +37,13 @@ Icon
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
+
+TestSoc/bin/Debug/TestSoc.exe
+TestSoc/bin/Debug/TestSoc.pdb
+TestSoc/obj/Debug/TestSoc.exe
+*.pdb
+ZedGraphPlot/bin/Debug/TestSoc.exe
+*.pdb
+ZedGraphPlot/bin/Debug/ZedGraphPlot.exe
+ZedGraphPlot/obj/x86/Debug/ZedGraphPlot.csprojResolveAssemblyReference.cache
+ZedGraphPlot/obj/x86/Debug/ZedGraphPlot.exe

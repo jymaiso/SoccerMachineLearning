@@ -18,7 +18,9 @@ namespace TestSoc
             cache.LoadAndProcessData(new Parameters
              {
                  Function = new ExpFunction(),
-                 GameCount = 74
+                 GameCount = 150,
+                 EnableStrongWeakOpposite = false,
+
              });
 
             QuotesModel qs = new QuotesModel(cache);
@@ -29,84 +31,88 @@ namespace TestSoc
 
             double pot = 100;
             int bet = 0;
+            int ttrue = 0;
+            int ffalse = 0;
+            StringBuilder sb = new StringBuilder();
             foreach (var quote in qs.Quotes)
             {
+
                 if (false)
+                {
+
+                }
+                else
                 {
                     var s1 = quote.Team1.StatsHistory.Where(a => a.Date < quote.Date).OrderByDescending(a => a.Date).First();
                     var s2 = quote.Team2.StatsHistory.Where(a => a.Date < quote.Date).OrderByDescending(a => a.Date).First();
 
+                    //var probTie = (s1.ProbTie + s2.ProbTie + s1.ProbHomeTie + s2.ProbExtTie) / 4;
+                    //var probWin1 = (s1.ProbWin + s1.ProbHomeWin + s2.ProbExtLoose) / 3;
+                    //var probWin2 = (s2.ProbWin + s2.ProbExtWin + s1.ProbHomeLoose) / 3;
 
+                    var probTie = (s1.ProbHomeTie + s2.ProbExtTie) / 2;
+                    var probWin1 = (s1.ProbHomeWin + s2.ProbExtLoose) / 2;
+                    var probWin2 = (s2.ProbExtWin + s1.ProbHomeLoose) / 2;
 
-                    var d1 = s1.ProbHomeWin - quote.R1;
-                    var d2 = s2.ProbExtWin - quote.R2;
+                    var betValue = pot / 10;
 
-                    if (d1 > 0.2 && d1 > d2)
+                    if ((probTie >= probWin1+0.2 && probTie >= probWin2+0.2))
                     {
-                        if (quote.Game.Winner == quote.Team1)
-                            pot += quote.Q1;
-                        else
-                            pot -= 1;
-
-                        bet++;
-                    }
-                    else if (d2 > 0.2 && d2 > d1)
-                    {
-                        if (quote.Game.Winner == quote.Team2)
-                            pot += quote.Q2;
-                        else
-                            pot -= 1;
-
-                        bet++;
-                    }
-                }
-                else
-                {
-                    var rank1 = quote.Team1.StatsHistory.Where(a => a.Date < quote.Date).OrderByDescending(a => a.Date).First();
-                    var rank2 = quote.Team2.StatsHistory.Where(a => a.Date < quote.Date).OrderByDescending(a => a.Date).First();
-
-                    var probTie = (rank1.ProbTie + rank2.ProbTie + rank1.ProbHomeTie + rank2.ProbExtTie) / 4;
-                    var probWin1 = (rank1.ProbWin + rank1.ProbHomeWin + rank2.ProbExtLoose) / 3;
-                    var probWin2 = (rank2.ProbWin + rank2.ProbExtWin + rank1.ProbHomeLoose) / 3;
-
-                    //var probTie = (rank1.ProbHomeTie + rank2.ProbExtTie) / 2;
-                    //var probWin1 = (rank1.ProbHomeWin + rank2.ProbExtLoose) / 2;
-                    //var probWin2 = (rank2.ProbExtWin + rank1.ProbHomeLoose) / 2;
-
-                    if ((probTie >= probWin1 && probTie >= probWin2) || Math.Abs(probWin1 - probWin2) < 0.1)
-                    {
-
                         if (quote.Game.Winner == null)
-                            pot += (quote.QT * pot / 10);
+                        {
+                            ttrue++;
+                            pot += ((quote.QT - 1) * betValue);
+                        }
                         else
-                            pot -= pot / 10;
+                        {
+                            ffalse++;
+                            pot -= betValue;
+                        }
 
                         bet++;
                     }
-                    else if (probWin1 >= probWin2)
+                    else if (probWin1 >= probWin2 + 0.2)
                     {
                         if (quote.Game.Winner == quote.Team1)
-                            pot += (quote.Q1* pot / 10);
+                        {
+                            ttrue++;
+                            pot += ((quote.Q1 - 1) * betValue);
+                        }
                         else
-                            pot -= pot / 10;
+                        {
+                            ffalse++;
+                            pot -= betValue;
+                        }
 
                         bet++;
                     }
-                    else
+                    else if (probWin2 >= probWin1 + 0.2)
                     {
                         if (quote.Game.Winner == quote.Team2)
-                            pot += (quote.Q2 * pot / 10);
+                        {
+                            ttrue++;
+                            pot += ((quote.Q2 - 1) * betValue);
+                        }
                         else
-                            pot -= pot / 10;
+                        {
+                            ffalse++;
+                            pot -= betValue;
+                        }
 
                         bet++;
                     }
                 }
+
                 Console.WriteLine(pot);
             }
 
+            //string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "data.csv");
+            //File.WriteAllText(file, sb.ToString());
+            //Process.Start(file);
+
             Console.WriteLine(qs.Quotes.Count);
             Console.WriteLine(bet);
+            Console.WriteLine(String.Format("True: {0}, False: {1}", ttrue, ffalse));
             Console.WriteLine(pot);
             Console.WriteLine("end");
             Console.ReadKey();
