@@ -120,7 +120,29 @@ namespace TestSoc
             if (Team2 == team)
                 return Stat2;
 
-            return null;
+            throw new Exception();
+        }
+
+        public int GetGoal(Team team)
+        {
+            if (Team1 == team)
+                return Score1;
+
+            if (Team2 == team)
+                return Score2;
+
+            throw new Exception();
+        }
+
+        public int GetOpositeGoal(Team team)
+        {
+            if (Team1 == team)
+                return Score2;
+
+            if (Team2 == team)
+                return Score1;
+
+            throw new Exception();
         }
 
     }
@@ -153,6 +175,8 @@ namespace TestSoc
         public double ProbExtLoose { get; set; }
 
         public Game Game { get; set; }
+
+        public double ProbClearSheet { get; set; }
     }
 
     public class Parameters

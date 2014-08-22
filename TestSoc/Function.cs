@@ -44,9 +44,22 @@ namespace TestSoc
 
     public class ExpFunction : IFunction
     {
+        private int p;
+
+        public ExpFunction()
+        {
+            // TODO: Complete member initialization
+            this.p = 2;
+        }
+
+        public ExpFunction(int p)
+        {
+            // TODO: Complete member initialization
+            this.p = p;
+        }
         public double Y(double x)
         {
-            return Math.Pow(x, 3);
+            return Math.Pow(x, p);
         }
     }
 }

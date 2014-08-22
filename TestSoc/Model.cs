@@ -115,6 +115,7 @@ namespace TestSoc
             //Re-order
             Games = Games.OrderBy(a => a.Date).ToList();
 
+            //--------------- Score ----------------------------------
             var dates = Games.Select(a => a.Date).Distinct().OrderBy(a => a).ToList();
 
             Dictionary<Team, Dictionary<DateTime, TeamResult>> scoreTeamsHistory = new Dictionary<Team, Dictionary<DateTime, TeamResult>>();
@@ -165,7 +166,7 @@ namespace TestSoc
 
 
                     var points = recentGames.Where(a => team.HavePlayThatDateTime(a.Key))
-                                            .Sum(a => (a.Value == TeamResult.Win) ? 3 : ((a.Value == TeamResult.Loose) ? 0 : 1));
+                                            .Sum(a => (a.Value == TeamResult.Win) ? 2 : ((a.Value == TeamResult.Loose) ? 0 : 1));
 
                     TeamStats stat = new TeamStats
                     {
@@ -189,23 +190,13 @@ namespace TestSoc
                     }
                 }
 
-                //int pos = 1;
-                //foreach (var item in localRanks.OrderByDescending(a => a.Points).ToList())
-                //{
-                //    if (pos <= 20)
-                //        item.Rank = pos++;
-                //    else
-                //        item.Rank = 20;
-                //}
+
             }
 
             double dataMin = Teams.SelectMany(a => a.StatsHistory).Min(a => a.Points);
             double dataMax = Teams.SelectMany(a => a.StatsHistory).Max(a => a.Points);
             Teams.SelectMany(a => a.StatsHistory).ToList().ForEach(a => a.Points = NormalizeData(a.Points, dataMin, dataMax, -1, 1));
 
-            //dataMin = Teams.SelectMany(a => a.RankHistory).Min(a => a.Rank);
-            //dataMax = Teams.SelectMany(a => a.RankHistory).Max(a => a.Rank);
-            //Teams.SelectMany(a => a.RankHistory).ToList().ForEach(a => a.Rank = NormalizeData(a.Rank, dataMin, dataMax, -1, 1));
 
             //--------------- Weighted prob ---------------------------------- 
             foreach (var date in dates)
@@ -216,7 +207,7 @@ namespace TestSoc
 
                     var games = team.Games.Where(a => a.Date < date).OrderByDescending(a => a.Date).Take(gameCount).OrderBy(a => a.Date).ToList();
                     var homeGames = games.Where(a => a.Team1 == team).OrderBy(a => a.Date).ToList();
-                    var extGames = games.Where(a => a.Team1 != team).OrderBy(a => a.Date).ToList();
+                    var awayGames = games.Where(a => a.Team2 == team).OrderBy(a => a.Date).ToList();
 
                     if (games.Count > 0)
                     {
@@ -227,16 +218,22 @@ namespace TestSoc
                             var stat = game.GetStat(team);
                             var statOposite = game.GetOpositeStat(team);
 
-                            var levelDiff = 1 + statOposite.Points;// / 2;
+                            var opponentWinFactor = Parameters.EnableStrongWeakOpposite ? 1 + statOposite.Points : 1;
+                            var opponentLooseFactor = 2 - opponentWinFactor;
 
-                            if (game.Winner == null)
+                            if (game.Result == GameResult.Tie)
                                 rank.ProbTie += Parameters.Function.Y(i);
 
-                            if (game.Winner == team)
-                                rank.ProbWin += Parameters.Function.Y(i) * (Parameters.EnableStrongWeakOpposite ? levelDiff : 1);
+                            else if (game.Winner == team)
+                                rank.ProbWin += Parameters.Function.Y(i) * opponentWinFactor;
 
-                            if (game.Winner != null && game.Winner != team)
-                                rank.ProbLoose += Parameters.Function.Y(i) * (Parameters.EnableStrongWeakOpposite ? (2 - levelDiff) : 1);
+                            else if (game.Winner != null && game.Winner != team)
+                                rank.ProbLoose += Parameters.Function.Y(i) * opponentLooseFactor;
+
+                            if (game.GetOpositeGoal(team) == 0)
+                            {
+                                rank.ProbClearSheet += Parameters.Function.Y(i);
+                            }
 
                             coeff += Parameters.Function.Y(i);
                         }
@@ -244,6 +241,7 @@ namespace TestSoc
                         rank.ProbTie = coeff == 0 ? 0 : rank.ProbTie / coeff;
                         rank.ProbWin = coeff == 0 ? 0 : rank.ProbWin / coeff;
                         rank.ProbLoose = coeff == 0 ? 0 : rank.ProbLoose / coeff;
+                        rank.ProbClearSheet = coeff == 0 ? 0 : rank.ProbClearSheet / coeff;
                     }
 
                     if (homeGames.Count > 0)
@@ -255,16 +253,17 @@ namespace TestSoc
                             var stat = game.GetStat(team);
                             var statOposite = game.GetOpositeStat(team);
 
-                            var levelDiff = 1 + statOposite.Points;// / 2;
+                            var opponentWinFactor = Parameters.EnableStrongWeakOpposite ? 1 + statOposite.Points : 1;
+                            var opponentLooseFactor = 2 - opponentWinFactor;
 
-                            if (game.Winner == null)
+                            if (game.Result == GameResult.Tie)
                                 rank.ProbHomeTie += Parameters.Function.Y(i);
 
-                            if (game.Winner == team)
-                                rank.ProbHomeWin += Parameters.Function.Y(i) * (Parameters.EnableStrongWeakOpposite ? levelDiff : 1);
+                            else if (game.Winner == team)
+                                rank.ProbHomeWin += Parameters.Function.Y(i) * opponentWinFactor;
 
-                            if (game.Winner != null && game.Winner != team)
-                                rank.ProbHomeLoose += Parameters.Function.Y(i) * (Parameters.EnableStrongWeakOpposite ? (2 - levelDiff) : 1);
+                            else if (game.Winner != null && game.Winner != team)
+                                rank.ProbHomeLoose += Parameters.Function.Y(i) * opponentLooseFactor;
 
                             coeff += Parameters.Function.Y(i);
                         }
@@ -272,28 +271,28 @@ namespace TestSoc
                         rank.ProbHomeTie = coeff == 0 ? 0 : rank.ProbHomeTie / coeff;
                         rank.ProbHomeWin = coeff == 0 ? 0 : rank.ProbHomeWin / coeff;
                         rank.ProbHomeLoose = coeff == 0 ? 0 : rank.ProbHomeLoose / coeff;
-
-
                     }
 
-                    if (extGames.Count > 0)
+                    if (awayGames.Count > 0)
                     {
                         double coeff = 0;
-                        for (int i = 0; i < extGames.Count; i++)
+                        for (int i = 0; i < awayGames.Count; i++)
                         {
-                            var game = extGames[i];
+                            var game = awayGames[i];
                             var stat = game.GetStat(team);
                             var statOposite = game.GetOpositeStat(team);
 
-                            var levelDiff = 1 + statOposite.Points;// / 2;
-                            if (game.Winner == null)
+                            var opponentWinFactor = Parameters.EnableStrongWeakOpposite ? 1 + statOposite.Points : 1;
+                            var opponentLooseFactor = 2 - opponentWinFactor;
+
+                            if (game.Result == GameResult.Tie)
                                 rank.ProbExtTie += Parameters.Function.Y(i);
 
-                            if (game.Winner == team)
-                                rank.ProbExtWin += Parameters.Function.Y(i) * (Parameters.EnableStrongWeakOpposite ? levelDiff : 1);
+                            else if (game.Winner == team)
+                                rank.ProbExtWin += Parameters.Function.Y(i) * opponentWinFactor;
 
-                            if (game.Winner != null && game.Winner != team)
-                                rank.ProbExtLoose += Parameters.Function.Y(i) * (Parameters.EnableStrongWeakOpposite ? (2 - levelDiff) : 1);
+                            else if (game.Winner != null && game.Winner != team)
+                                rank.ProbExtLoose += Parameters.Function.Y(i) * opponentLooseFactor;
 
                             coeff += Parameters.Function.Y(i);
                         }

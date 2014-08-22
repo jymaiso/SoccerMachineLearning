@@ -14,26 +14,61 @@ namespace TestSoc
     {
         static void Main(string[] args)
         {
-            Model cache = new Model();
-            cache.LoadAndProcessData(new Parameters
-             {
-                 Function = new ExpFunction(),
-                 GameCount = 150,
-                 EnableStrongWeakOpposite = false,
+            //Console.WriteLine("ExpFunction");
+            //{
+            //    Model cache = new Model();
+            //    cache.LoadAndProcessData(new Parameters
+            //     {
+            //         Function = new ExpFunction(3),
+            //         GameCount = 74,
+            //         EnableStrongWeakOpposite = false,
 
-             });
+            //     });
+           
 
-            QuotesModel qs = new QuotesModel(cache);
-            qs.LoadData();
+            //QuotesModel qs = new QuotesModel(cache);
+            //qs.LoadData();
+            //ProcessQuotes(qs);
+            //}
+
+            Console.WriteLine("EnableStrongWeakOpposite");
+            {
+                Model cache = new Model();
+                cache.LoadAndProcessData(new Parameters
+                {
+                    Function = new ExpFunction(3),
+                    GameCount = 74,
+                    EnableStrongWeakOpposite = true,
+
+                });
+
+
+                QuotesModel qs = new QuotesModel(cache);
+                qs.LoadData();
+                ProcessQuotes(qs);
+            }
+
+           
 
             //RunSimpleExport(cache);
             //RunSimplePrediction(cache);
 
+
+            Console.WriteLine("end");
+            Console.ReadKey();
+        }
+
+        private static void ProcessQuotes(QuotesModel qs)
+        {
             double pot = 100;
             int bet = 0;
             int ttrue = 0;
             int ffalse = 0;
             StringBuilder sb = new StringBuilder();
+
+            double myBetScore = 0;
+            double bookieBetScore = 0;
+
             foreach (var quote in qs.Quotes)
             {
 
@@ -43,8 +78,12 @@ namespace TestSoc
                 }
                 else
                 {
-                    var s1 = quote.Team1.StatsHistory.Where(a => a.Date < quote.Date).OrderByDescending(a => a.Date).First();
-                    var s2 = quote.Team2.StatsHistory.Where(a => a.Date < quote.Date).OrderByDescending(a => a.Date).First();
+                    int win1Coeff = quote.Game.Result == GameResult.T1 ? 1 : 0;
+                    int win2Coeff = quote.Game.Result == GameResult.T2 ? 1 : 0;
+                    int winTCoeff = quote.Game.Result == GameResult.Tie ? 1 : 0;
+
+                    var s1 = quote.Team1.StatsHistory.Where(a => a.Date == quote.Date).Single();
+                    var s2 = quote.Team2.StatsHistory.Where(a => a.Date == quote.Date).Single();
 
                     //var probTie = (s1.ProbTie + s2.ProbTie + s1.ProbHomeTie + s2.ProbExtTie) / 4;
                     //var probWin1 = (s1.ProbWin + s1.ProbHomeWin + s2.ProbExtLoose) / 3;
@@ -54,9 +93,27 @@ namespace TestSoc
                     var probWin1 = (s1.ProbHomeWin + s2.ProbExtLoose) / 2;
                     var probWin2 = (s2.ProbExtWin + s1.ProbHomeLoose) / 2;
 
+
+
+                    var total = probTie + probWin1 + probWin2;
+                    var probTieNorm = probTie / total;
+                    var probWin1Norm = probWin1 / total;
+                    var probWin2Norm = probWin2 / total;
+
+                    myBetScore += probTieNorm * winTCoeff + probWin1Norm * win1Coeff + probWin2Norm * win2Coeff;
+
+
+                    var totalBookie = quote.R1 + quote.R2 + quote.RT;
+                    var probTieNormBookie = quote.RT / totalBookie;
+                    var probWin1NormBookie = quote.R1 / totalBookie;
+                    var probWin2NormBookie = quote.R2 / totalBookie;
+
+
+                    bookieBetScore += probTieNormBookie * winTCoeff + probWin1NormBookie * win1Coeff + probWin2NormBookie * win2Coeff;
+
                     var betValue = pot / 10;
 
-                    if ((probTie >= probWin1+0.2 && probTie >= probWin2+0.2))
+                    if ((probTie >= probWin1 + 0.2 && probTie >= probWin2 + 0.2))
                     {
                         if (quote.Game.Winner == null)
                         {
@@ -102,20 +159,22 @@ namespace TestSoc
                         bet++;
                     }
                 }
-
-                Console.WriteLine(pot);
             }
+
+            myBetScore = myBetScore / qs.Quotes.Count;
+            bookieBetScore = bookieBetScore / qs.Quotes.Count;
+
+            Console.WriteLine(myBetScore);
+            Console.WriteLine(bookieBetScore);
 
             //string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "data.csv");
             //File.WriteAllText(file, sb.ToString());
             //Process.Start(file);
 
-            Console.WriteLine(qs.Quotes.Count);
-            Console.WriteLine(bet);
-            Console.WriteLine(String.Format("True: {0}, False: {1}", ttrue, ffalse));
-            Console.WriteLine(pot);
-            Console.WriteLine("end");
-            Console.ReadKey();
+            //Console.WriteLine(qs.Quotes.Count);
+            //Console.WriteLine(bet);
+            //Console.WriteLine(String.Format("True: {0}, False: {1}", ttrue, ffalse));
+            //Console.WriteLine(pot);
         }
 
         public static void RunSimpleExport(Model cache)
