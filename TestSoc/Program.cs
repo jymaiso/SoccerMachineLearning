@@ -210,7 +210,7 @@ namespace TestSoc
                         || (66 <= random && random < 100 && quote.Game.Winner == quote.Team2))
                     {
                         randomBetScore += 1;
-                        Console.WriteLine();
+                      
                     }
 
                     randomRPS += 0.5 * (Math.Pow(0.33 - winTCoeff, 2) + Math.Pow(0.33 - win1Coeff, 2) + Math.Pow(0.33 - win2Coeff, 2));
