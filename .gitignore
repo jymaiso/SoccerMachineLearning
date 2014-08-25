@@ -13,9 +13,10 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
-TestSoc/bin/
-obj/
-[Bb]in/
+.\ZedGraphPlot\obj
+.\ZedGraphPlot\bin
+.\TestSoc\obj
+.\TestSoc\bin
 
 # =========================
 # Operating System Files
