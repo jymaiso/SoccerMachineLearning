@@ -231,9 +231,11 @@ namespace TestSoc
                                 rank.ProbLoose += Parameters.Function.Y(i) * opponentLooseFactor;
 
                             if (game.GetOpositeGoal(team) == 0)
-                            {
                                 rank.ProbClearSheet += Parameters.Function.Y(i);
-                            }
+
+                            rank.ProbGoal += game.GetGoal(team) * Parameters.Function.Y(i);
+                            rank.ProbOpositeGoal += game.GetOpositeGoal(team) * Parameters.Function.Y(i);
+                            rank.ProbDiffGoal += (game.GetGoal(team) - game.GetOpositeGoal(team)) * Parameters.Function.Y(i);
 
                             coeff += Parameters.Function.Y(i);
                         }
@@ -242,6 +244,9 @@ namespace TestSoc
                         rank.ProbWin = coeff == 0 ? 0 : rank.ProbWin / coeff;
                         rank.ProbLoose = coeff == 0 ? 0 : rank.ProbLoose / coeff;
                         rank.ProbClearSheet = coeff == 0 ? 0 : rank.ProbClearSheet / coeff;
+                        rank.ProbGoal = coeff == 0 ? 0 : rank.ProbGoal / coeff;
+                        rank.ProbOpositeGoal = coeff == 0 ? 0 : rank.ProbOpositeGoal / coeff;
+                        rank.ProbDiffGoal = coeff == 0 ? 0 : rank.ProbDiffGoal / coeff;
                     }
 
                     if (homeGames.Count > 0)
@@ -265,12 +270,23 @@ namespace TestSoc
                             else if (game.Winner != null && game.Winner != team)
                                 rank.ProbHomeLoose += Parameters.Function.Y(i) * opponentLooseFactor;
 
+                            if (game.GetOpositeGoal(team) == 0)
+                                rank.ProbHomeClearSheet += Parameters.Function.Y(i);
+
+                            rank.ProbHomeGoal += game.GetGoal(team) * Parameters.Function.Y(i);
+                            rank.ProbHomeOpositeGoal += game.GetOpositeGoal(team) * Parameters.Function.Y(i);
+                            rank.ProbHomeDiffGoal += (game.GetGoal(team) - game.GetOpositeGoal(team)) * Parameters.Function.Y(i);
+
                             coeff += Parameters.Function.Y(i);
                         }
 
                         rank.ProbHomeTie = coeff == 0 ? 0 : rank.ProbHomeTie / coeff;
                         rank.ProbHomeWin = coeff == 0 ? 0 : rank.ProbHomeWin / coeff;
                         rank.ProbHomeLoose = coeff == 0 ? 0 : rank.ProbHomeLoose / coeff;
+                        rank.ProbHomeClearSheet = coeff == 0 ? 0 : rank.ProbHomeClearSheet / coeff;
+                        rank.ProbHomeGoal = coeff == 0 ? 0 : rank.ProbHomeGoal / coeff;
+                        rank.ProbHomeOpositeGoal = coeff == 0 ? 0 : rank.ProbHomeOpositeGoal / coeff;
+                        rank.ProbHomeDiffGoal = coeff == 0 ? 0 : rank.ProbHomeDiffGoal / coeff;
                     }
 
                     if (awayGames.Count > 0)
@@ -294,12 +310,23 @@ namespace TestSoc
                             else if (game.Winner != null && game.Winner != team)
                                 rank.ProbExtLoose += Parameters.Function.Y(i) * opponentLooseFactor;
 
+                            if (game.GetOpositeGoal(team) == 0)
+                                rank.ProbExtClearSheet += Parameters.Function.Y(i);
+
+                            rank.ProbExtGoal += game.GetGoal(team) * Parameters.Function.Y(i);
+                            rank.ProbExtOpositeGoal += game.GetOpositeGoal(team) * Parameters.Function.Y(i);
+                            rank.ProbExtDiffGoal += (game.GetGoal(team) - game.GetOpositeGoal(team)) * Parameters.Function.Y(i);
+
                             coeff += Parameters.Function.Y(i);
                         }
 
                         rank.ProbExtTie = coeff == 0 ? 0 : rank.ProbExtTie / coeff;
                         rank.ProbExtWin = coeff == 0 ? 0 : rank.ProbExtWin / coeff;
                         rank.ProbExtLoose = coeff == 0 ? 0 : rank.ProbExtLoose / coeff;
+                        rank.ProbExtClearSheet = coeff == 0 ? 0 : rank.ProbExtClearSheet / coeff;
+                        rank.ProbExtGoal = coeff == 0 ? 0 : rank.ProbExtGoal / coeff;
+                        rank.ProbExtOpositeGoal = coeff == 0 ? 0 : rank.ProbExtOpositeGoal / coeff;
+                        rank.ProbExtDiffGoal = coeff == 0 ? 0 : rank.ProbExtDiffGoal / coeff;
 
                         if (double.IsNaN(rank.ProbHomeTie) || double.IsNaN(rank.ProbHomeWin) || double.IsNaN(rank.ProbHomeLoose))
                         {

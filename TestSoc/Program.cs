@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using LinqToExcel;
@@ -24,7 +25,7 @@ namespace TestSoc
             //         EnableStrongWeakOpposite = false,
 
             //     });
-           
+
 
             //QuotesModel qs = new QuotesModel(cache);
             //qs.LoadData();
@@ -37,25 +38,62 @@ namespace TestSoc
                 cache.LoadAndProcessData(new Parameters
                 {
                     Function = new ExpFunction(3),
-                    GameCount = 74,
+                    GameCount = 148,
                     EnableStrongWeakOpposite = true,
 
                 });
 
+                //GetCSV(cache);
 
                 QuotesModel qs = new QuotesModel(cache);
                 qs.LoadData();
                 ProcessQuotes(qs);
             }
 
-           
-
-            //RunSimpleExport(cache);
-            //RunSimplePrediction(cache);
-
-
             Console.WriteLine("end");
             Console.ReadKey();
+        }
+
+        private static void GetCSV(Model cache)
+        {
+            List<Game> Games = cache.Games;
+
+            Type type = typeof(TeamStats);
+            List<PropertyInfo> properties = type.GetProperties().Where(a => a.CanRead && a.PropertyType == typeof(double)).ToList();
+            var sb = new StringBuilder();
+
+            // First line contains field names
+
+            sb.Append(String.Join(",", properties.Select(a => a.Name + "_1").Union(properties.Select(a => a.Name + "_2"))));
+            sb.Append(",Output");
+            sb.AppendLine();
+
+            foreach (Game game in Games)
+            {
+
+                foreach (PropertyInfo prp in properties)
+                {
+                    if (prp.CanRead)
+                    {
+                        sb.Append(prp.GetValue(game.Stat1, null).ToString().Replace(",", ".")).Append(',');
+                    }
+                }
+
+                foreach (PropertyInfo prp in properties)
+                {
+                    if (prp.CanRead)
+                    {
+                        sb.Append(prp.GetValue(game.Stat2, null).ToString().Replace(",", ".")).Append(',');
+                    }
+                }
+
+                sb.Append(game.Result);
+                sb.AppendLine();
+            }
+
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "data.csv");
+            File.WriteAllText(file, sb.ToString());
+            Process.Start(file);
         }
 
         private static void ProcessQuotes(QuotesModel qs)
@@ -68,7 +106,13 @@ namespace TestSoc
 
             double myBetScore = 0;
             double bookieBetScore = 0;
+            double randomBetScore = 0;
 
+            double myRPS = 0;
+            double bookieRPS = 0;
+            double randomRPS = 0;
+
+            Random rnd = new Random(DateTime.Now.Millisecond);
             foreach (var quote in qs.Quotes)
             {
 
@@ -93,15 +137,13 @@ namespace TestSoc
                     var probWin1 = (s1.ProbHomeWin + s2.ProbExtLoose) / 2;
                     var probWin2 = (s2.ProbExtWin + s1.ProbHomeLoose) / 2;
 
-
-
                     var total = probTie + probWin1 + probWin2;
                     var probTieNorm = probTie / total;
                     var probWin1Norm = probWin1 / total;
                     var probWin2Norm = probWin2 / total;
 
                     myBetScore += probTieNorm * winTCoeff + probWin1Norm * win1Coeff + probWin2Norm * win2Coeff;
-
+                    myRPS += 0.5 * (Math.Pow(probTieNorm - winTCoeff, 2) + Math.Pow(probWin1Norm - win1Coeff, 2) + Math.Pow(probWin2Norm - win2Coeff, 2));
 
                     var totalBookie = quote.R1 + quote.R2 + quote.RT;
                     var probTieNormBookie = quote.RT / totalBookie;
@@ -110,6 +152,7 @@ namespace TestSoc
 
 
                     bookieBetScore += probTieNormBookie * winTCoeff + probWin1NormBookie * win1Coeff + probWin2NormBookie * win2Coeff;
+                    bookieRPS += 0.5 * (Math.Pow(probTieNormBookie - winTCoeff, 2) + Math.Pow(probWin1NormBookie - win1Coeff, 2) + Math.Pow(probWin2NormBookie - win2Coeff, 2));
 
                     var betValue = pot / 10;
 
@@ -128,232 +171,71 @@ namespace TestSoc
 
                         bet++;
                     }
-                    else if (probWin1 >= probWin2 + 0.2)
-                    {
-                        if (quote.Game.Winner == quote.Team1)
+                    else
+                        if (probWin1 >= probWin2 + 0.2)
                         {
-                            ttrue++;
-                            pot += ((quote.Q1 - 1) * betValue);
+                            if (quote.Game.Winner == quote.Team1)
+                            {
+                                ttrue++;
+                                pot += ((quote.Q1 - 1) * betValue);
+                            }
+                            else
+                            {
+                                ffalse++;
+                                pot -= betValue;
+                            }
+
+                            bet++;
                         }
                         else
-                        {
-                            ffalse++;
-                            pot -= betValue;
-                        }
+                            if (probWin2 >= probWin1 + 0.2)
+                            {
+                                if (quote.Game.Winner == quote.Team2)
+                                {
+                                    ttrue++;
+                                    pot += ((quote.Q2 - 1) * betValue);
+                                }
+                                else
+                                {
+                                    ffalse++;
+                                    pot -= betValue;
+                                }
 
-                        bet++;
-                    }
-                    else if (probWin2 >= probWin1 + 0.2)
+                                bet++;
+                            }
+
+                    var random = rnd.Next(1, 100);
+                    if ((1 <= random && random < 33 && quote.Game.Winner == quote.Team1)
+                        || (33 <= random && random < 66 && quote.Game.Result == GameResult.Tie)
+                        || (66 <= random && random < 100 && quote.Game.Winner == quote.Team2))
                     {
-                        if (quote.Game.Winner == quote.Team2)
-                        {
-                            ttrue++;
-                            pot += ((quote.Q2 - 1) * betValue);
-                        }
-                        else
-                        {
-                            ffalse++;
-                            pot -= betValue;
-                        }
-
-                        bet++;
+                        randomBetScore += 1;
                     }
+
+                    randomRPS += 0.5 * (Math.Pow(0.33 - winTCoeff, 2) + Math.Pow(0.33 - win1Coeff, 2) + Math.Pow(0.33 - win2Coeff, 2));
                 }
             }
 
             myBetScore = myBetScore / qs.Quotes.Count;
             bookieBetScore = bookieBetScore / qs.Quotes.Count;
+            randomBetScore = randomBetScore / qs.Quotes.Count;
 
-            Console.WriteLine(myBetScore);
-            Console.WriteLine(bookieBetScore);
+            myRPS = myRPS / qs.Quotes.Count;
+            bookieRPS = bookieRPS / qs.Quotes.Count;
+            randomRPS = randomRPS / qs.Quotes.Count;
 
-            //string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "data.csv");
-            //File.WriteAllText(file, sb.ToString());
-            //Process.Start(file);
+            Console.WriteLine("myBetScore : " + myBetScore);
+            Console.WriteLine("bookieBetScore : " + bookieBetScore);
+            Console.WriteLine("randomBetScore : " + randomBetScore);
 
-            //Console.WriteLine(qs.Quotes.Count);
-            //Console.WriteLine(bet);
-            //Console.WriteLine(String.Format("True: {0}, False: {1}", ttrue, ffalse));
-            //Console.WriteLine(pot);
-        }
+            Console.WriteLine("myRPS : " + myRPS);
+            Console.WriteLine("bookieRPS : " + bookieRPS);
+            Console.WriteLine("randomRPS : " + randomRPS);
 
-        public static void RunSimpleExport(Model cache)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            List<String> labels = new List<string>(){
-                "ProbTie1",
-                "ProbWin1", 
-                "ProbLoose1", 
-                "ProbHomeTie1",
-                "ProbHomeWin1", 
-                "ProbHomeLoose1",
-                //"ProbExtTie1",  
-                //"ProbExtWin1",  
-                //"ProbExtLoose1", 
-                "ProbTie2",
-                "ProbWin2", 
-                "ProbLoose2", 
-                //"ProbHomeTie2",
-                //"ProbHomeWin2", 
-                //"ProbHomeLoose2",
-                "ProbExtTie2",  
-                "ProbExtWin2",  
-                "ProbExtLoose2", 
-                "game.Result",
-            };
-
-            //ProbTie
-            //ProbWin 
-            //ProbLoose 
-            //ProbHomeTie
-            //ProbHomeWin 
-            //ProbHomeLoose
-            //ProbExtTie  
-            //ProbExtWin  
-            //ProbExtLoose 
-
-            sb.AppendLine(String.Join(",", labels));
-
-            for (int i = 0; i < cache.Games.Count - 1000; i++)
-            {
-                var index = cache.Games.Count - i - 1;
-                var game = cache.Games[index];
-
-                Team team1 = game.Team1;
-                Team team2 = game.Team2;
-
-                var rank1 = team1.StatsHistory.First(a => a.Date == game.Date);
-                var rank2 = team2.StatsHistory.First(a => a.Date == game.Date);
-
-                List<String> entry = new List<String>(){
-                  
-                     rank1.ProbTie         .TS(),
-                     rank1.ProbWin         .TS(),
-                     rank1.ProbLoose       .TS(),
-                     rank1.ProbHomeTie     .TS(),
-                     rank1.ProbHomeWin     .TS(),
-                     rank1.ProbHomeLoose   .TS(),
-                     //rank1.ProbExtTie      .TS(),
-                     //rank1.ProbExtWin      .TS(),
-                     //rank1.ProbExtLoose    .TS(),
-                                
-                     rank2.ProbTie         .TS(),
-                     rank2.ProbWin         .TS(),
-                     rank2.ProbLoose       .TS(),
-                     //rank2.ProbHomeTie     .TS(),
-                     //rank2.ProbHomeWin     .TS(),
-                     //rank2.ProbHomeLoose   .TS(),
-                     rank2.ProbExtTie      .TS(),
-                     rank2.ProbExtWin      .TS(),
-                     rank2.ProbExtLoose    .TS(),
-
-                    game.Result.ToString(),
-                };
-
-                if (Double.IsNaN(rank1.ProbTie) ||
-                    Double.IsNaN(rank1.ProbWin) ||
-                    Double.IsNaN(rank1.ProbLoose) ||
-                    Double.IsNaN(rank1.ProbHomeTie) ||
-                    Double.IsNaN(rank1.ProbHomeWin) ||
-                    Double.IsNaN(rank1.ProbHomeLoose) ||
-                    //Double.IsNaN(rank1.ProbExtTie) ||
-                    //Double.IsNaN(rank1.ProbExtWin) ||
-                    //Double.IsNaN(rank1.ProbExtLoose) ||
-                    Double.IsNaN(rank2.ProbTie) ||
-                    Double.IsNaN(rank2.ProbWin) ||
-                    Double.IsNaN(rank2.ProbLoose) ||
-                    //Double.IsNaN(rank2.ProbHomeTie) ||
-                    //Double.IsNaN(rank2.ProbHomeWin) ||
-                    //Double.IsNaN(rank2.ProbHomeLoose) ||
-                    Double.IsNaN(rank2.ProbExtTie) ||
-                    Double.IsNaN(rank2.ProbExtWin) ||
-                    Double.IsNaN(rank2.ProbExtLoose))
-                {
-
-                }
-                else
-                    sb.AppendLine(String.Join(",", entry));
-            }
-
-            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "data.csv");
-            File.WriteAllText(file, sb.ToString());
-            Process.Start(file);
-        }
-
-        private static void RunSimplePrediction(Model cache)
-        {
-            List<Tuple<GameResult, GameResult>> predResults = new List<Tuple<GameResult, GameResult>>();
-
-            for (int i = 0; i < cache.Games.Count - 1000; i++)
-            {
-                var index = cache.Games.Count - i - 1;
-                var game = cache.Games[index];
-
-                Team team1 = game.Team1;
-                Team team2 = game.Team2;
-
-                var rank1 = team1.StatsHistory.First(a => a.Date == game.Date);
-                var rank2 = team2.StatsHistory.First(a => a.Date == game.Date);
-
-                var probTie = (rank1.ProbTie + rank2.ProbTie + rank1.ProbHomeTie + rank2.ProbExtTie) / 4;
-                var probWin1 = (rank1.ProbWin + rank1.ProbHomeWin + rank2.ProbExtLoose) / 3;
-                var probWin2 = (rank2.ProbWin + rank2.ProbExtWin + rank1.ProbHomeLoose) / 3;
-
-                //var probTie = (rank1.ProbHomeTie + rank2.ProbExtTie) / 2;
-                //var probWin1 = (rank1.ProbHomeWin + rank2.ProbExtLoose) / 2;
-                //var probWin2 = (rank2.ProbExtWin + rank1.ProbHomeLoose) / 2;
-
-                if ((probTie >= probWin1 && probTie >= probWin2) || Math.Abs(probWin1 - probWin2) < 0.1)
-                    predResults.Add(new Tuple<GameResult, GameResult>(GameResult.Tie, game.Result));
-                else if (probWin1 >= probWin2)
-                    predResults.Add(new Tuple<GameResult, GameResult>(GameResult.T1, game.Result));
-                else
-                    predResults.Add(new Tuple<GameResult, GameResult>(GameResult.T2, game.Result));
-
-                //predResults.Add(new Tuple<Result, Result>(predResult, game.Result));
-
-                //if (probWin1 >= probWin2 )
-                //{
-                //    predResults.Add(new Tuple<GameResult, GameResult>(GameResult.T1, game.Result));
-                //}
-
-                //if (probWin2 > probWin1 )
-                //{
-                //    predResults.Add(new Tuple<GameResult, GameResult>(GameResult.T2, game.Result));
-                //}
-
-                //if (probTie >= probWin1 && probTie >= probWin2)
-                //    predResult = Result.Tie;
-                //else if (probWin1 >= probWin2)
-                //    predResult = Result.T1;
-                //else
-                //    predResult = Result.T2;
-
-
-
-            }
-
-            Console.WriteLine("Count : " + predResults.Count);
-            Console.WriteLine("Score : " + Math.Round(predResults.Count(a => a.Item1 == a.Item2) / (double)predResults.Count, 2));
-            Console.WriteLine("Score Tie: " + Math.Round(predResults.Where(a => a.Item1 == GameResult.Tie).Count(a => a.Item1 == a.Item2) / (double)predResults.Where(a => a.Item1 == GameResult.Tie).Count(), 2));
-            Console.WriteLine("Score T1: " + Math.Round(predResults.Where(a => a.Item1 == GameResult.T1).Count(a => a.Item1 == a.Item2) / (double)predResults.Where(a => a.Item1 == GameResult.T1).Count(), 2));
-            Console.WriteLine("Score T2: " + Math.Round(predResults.Where(a => a.Item1 == GameResult.T2).Count(a => a.Item1 == a.Item2) / (double)predResults.Where(a => a.Item1 == GameResult.T2).Count(), 2));
-
-            Console.WriteLine();
-            Console.WriteLine("--- Real ---");
-            Console.WriteLine("Tie : " + predResults.Count(a => a.Item2 == GameResult.Tie));
-            Console.WriteLine("T1 : " + predResults.Count(a => a.Item2 == GameResult.T1));
-            Console.WriteLine("T2 : " + predResults.Count(a => a.Item2 == GameResult.T2));
-            Console.WriteLine();
-            Console.WriteLine("--- Prediction ---");
-            Console.WriteLine("Tie : " + predResults.Count(a => a.Item1 == GameResult.Tie));
-            Console.WriteLine("T1 : " + predResults.Count(a => a.Item1 == GameResult.T1));
-            Console.WriteLine("T2 : " + predResults.Count(a => a.Item1 == GameResult.T2));
-
-
-
+            Console.WriteLine(qs.Quotes.Count);
+            Console.WriteLine(bet);
+            Console.WriteLine(String.Format("True: {0}, False: {1}", ttrue, ffalse));
+            Console.WriteLine(pot);
         }
     }
-
 }

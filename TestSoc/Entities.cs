@@ -177,6 +177,28 @@ namespace TestSoc
         public Game Game { get; set; }
 
         public double ProbClearSheet { get; set; }
+
+        public double ProbGoal { get; set; }
+
+        public double ProbOpositeGoal { get; set; }
+
+        public double ProbDiffGoal { get; set; }
+
+        public double ProbHomeClearSheet { get; set; }
+
+        public double ProbHomeGoal { get; set; }
+
+        public double ProbHomeOpositeGoal { get; set; }
+
+        public double ProbHomeDiffGoal { get; set; }
+
+        public double ProbExtClearSheet { get; set; }
+
+        public double ProbExtGoal { get; set; }
+
+        public double ProbExtOpositeGoal { get; set; }
+
+        public double ProbExtDiffGoal { get; set; }
     }
 
     public class Parameters
