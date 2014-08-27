@@ -199,6 +199,8 @@ namespace TestSoc
         public double ProbExtOpositeGoal { get; set; }
 
         public double ProbExtDiffGoal { get; set; }
+
+
     }
 
     public class Parameters
@@ -232,13 +234,69 @@ namespace TestSoc
         public double Q2 { get; set; }
 
 
-        public double R1 { get { return 1 / Q1; } }
-        public double RT { get { return 1 / QT; } }
-        public double R2 { get { return 1 / Q2; } }
-
 
         public DateTime Date { get; set; }
 
         public Game Game { get; set; }
+
+
+        public TeamStats Stat1
+        {
+            get
+            {
+                if (_s1 == null)
+                {
+                    _s1 = Team1.StatsHistory.Where(a => a.Date == Date).First();
+                }
+                return _s1;
+            }
+            set { _s1 = value; }
+        }
+        private TeamStats _s1;
+
+        public TeamStats Stat2
+        {
+            get
+            {
+                if (_s2 == null)
+                {
+                    _s2 = Team2.StatsHistory.Where(a => a.Date == Date).First();
+                }
+                return _s2;
+            }
+            set { _s2 = value; }
+        }
+        private TeamStats _s2;
+
+        private double P1 { get { return (Stat1.ProbHomeWin + Stat2.ProbExtLoose) / 2; } }
+        private double PT { get { return (Stat1.ProbHomeTie + Stat2.ProbExtTie) / 2; } }
+        private double P2 { get { return (Stat2.ProbExtWin + Stat1.ProbHomeLoose) / 2; } }
+        private double TotalP { get { return (P1 + PT + P2); } }
+
+        private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
+
+        public double MyProb1 { get { return P1 / TotalP; } }
+        public double MyProbT { get { return PT / TotalP; } }
+        public double MyProb2 { get { return P2 / TotalP; } }
+
+        public int ActualProb1 { get { return Game.Result == GameResult.T1 ? 1 : 0; } }
+        public int ActualProbT { get { return Game.Result == GameResult.Tie ? 1 : 0; } }
+        public int ActualProb2 { get { return Game.Result == GameResult.T2 ? 1 : 0; } }
+
+        public double BookieProb1 { get { return 1 / Q1 / TotalQ; } }
+        public double BookieProbT { get { return 1 / QT / TotalQ; } }
+        public double BookieProb2 { get { return 1 / Q2 / TotalQ; } }
+
+        public double MyMSE { get { return 1 / (double)3 * (Math.Pow(MyProb1 - ActualProb1, 2) + Math.Pow(MyProbT - ActualProbT, 2) + Math.Pow(MyProb2 - ActualProb2, 2)); } }
+        public double BookieMSE { get { return 1 / (double)3 * (Math.Pow(BookieProb1 - ActualProb1, 2) + Math.Pow(BookieProbT - ActualProbT, 2) + Math.Pow(BookieProb2 - ActualProb2, 2)); } }
+        public double RandomMSE { get { return 1 / (double)3 * (Math.Pow(0.333333 - ActualProb1, 2) + Math.Pow(0.333333 - ActualProbT, 2) + Math.Pow(0.333333 - ActualProb2, 2)); } }
+    }
+
+    public class BetPot
+    {
+        public double pot = 100;
+        public int bet = 0;
+        public int ttrue = 0;
+        public int ffalse = 0;
     }
 }
