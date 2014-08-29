@@ -82,11 +82,11 @@ namespace TestSoc
 
         public void LoadAndProcessData(Parameters Parameters)
         {
-            this.LoadData(Parameters);
+            this.LoadData();
             this.ProcessData(Parameters);
         }
 
-        public void LoadData(Parameters Parameters)
+        public void LoadData()
         {
             string file = Path.Combine(Environment.CurrentDirectory, "data.xlsx");
 
@@ -112,6 +112,9 @@ namespace TestSoc
         public void ProcessData(Parameters Parameters)
         {
 
+            this.Teams.ForEach(a => a.StatsHistory.Clear());
+            this.Games.ForEach(a => a.Stat1 = null);
+            this.Games.ForEach(a => a.Stat2 = null);
             //Re-order
             Games = Games.OrderBy(a => a.Date).ToList();
 
@@ -141,7 +144,8 @@ namespace TestSoc
                 }
             }
 
-            int gameCount = Parameters.GameCount;
+            //int gameCount = Parameters.GameCount;
+            int gameCount = (int)TestSoc.Quote.Singleton.Instance.Limit;
 
             //--------------- Points and Rank ---------------------------------- 
             foreach (var date in dates)
@@ -189,8 +193,6 @@ namespace TestSoc
                         stat.Game = game;
                     }
                 }
-
-
             }
 
             double dataMin = Teams.SelectMany(a => a.StatsHistory).Min(a => a.Points);
@@ -205,7 +207,7 @@ namespace TestSoc
                 {
                     var rank = team.StatsHistory.Where(a => a.Date == date).First();
 
-                    var games = team.Games.Where(a => a.Date < date).OrderByDescending(a => a.Date).Take(gameCount).OrderBy(a => a.Date).ToList();
+                    var games = team.Games.Where(a => a.Date < date && a.Stat1 != null).OrderByDescending(a => a.Date).Take(gameCount).OrderBy(a => a.Date).ToList();
                     var homeGames = games.Where(a => a.Team1 == team).OrderBy(a => a.Date).ToList();
                     var awayGames = games.Where(a => a.Team2 == team).OrderBy(a => a.Date).ToList();
 

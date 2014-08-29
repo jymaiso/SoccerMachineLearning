@@ -271,6 +271,11 @@ namespace TestSoc
         private double P1 { get { return (Stat1.ProbHomeWin + Stat2.ProbExtLoose) / 2; } }
         private double PT { get { return (Stat1.ProbHomeTie + Stat2.ProbExtTie) / 2; } }
         private double P2 { get { return (Stat2.ProbExtWin + Stat1.ProbHomeLoose) / 2; } }
+
+        //private double P1 { get { return (Stat1.ProbWin) ; } }
+        //private double PT { get { return (Stat1.ProbTie + Stat2.ProbTie) / 2; } }
+        //private double P2 { get { return (Stat2.ProbWin); } }
+
         private double TotalP { get { return (P1 + PT + P2); } }
 
         private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
@@ -290,6 +295,98 @@ namespace TestSoc
         public double MyMSE { get { return 1 / (double)3 * (Math.Pow(MyProb1 - ActualProb1, 2) + Math.Pow(MyProbT - ActualProbT, 2) + Math.Pow(MyProb2 - ActualProb2, 2)); } }
         public double BookieMSE { get { return 1 / (double)3 * (Math.Pow(BookieProb1 - ActualProb1, 2) + Math.Pow(BookieProbT - ActualProbT, 2) + Math.Pow(BookieProb2 - ActualProb2, 2)); } }
         public double RandomMSE { get { return 1 / (double)3 * (Math.Pow(0.333333 - ActualProb1, 2) + Math.Pow(0.333333 - ActualProbT, 2) + Math.Pow(0.333333 - ActualProb2, 2)); } }
+
+        public double MyCorrect
+        {
+            get
+            {
+                switch (MyResult)
+                {
+                    case GameResult.T1:
+                        return Game.Winner == Team1 ? 1 : 0;
+                    case GameResult.T2:
+                        return Game.Winner == Team2 ? 1 : 0;
+                    case GameResult.Tie:
+                        return Game.Winner == null ? 1 : 0;
+                    default:
+                        break;
+                }
+
+                throw new Exception();
+            }
+        }
+
+        public class Singleton
+        {
+            public double Limit { get; set; }
+
+            private static Singleton instance;
+
+            private Singleton() { }
+
+            public static Singleton Instance
+            {
+                get
+                {
+                    if (instance == null)
+                    {
+                        instance = new Singleton();
+                    }
+                    return instance;
+                }
+            }
+        }
+
+        public GameResult MyResult
+        {
+            get
+            {
+                //if (MyProb1 >= MyProbT && MyProb1 >= MyProb2)
+                //    return GameResult.T1;
+                //else if (MyProbT >= MyProb1 && MyProbT >= MyProb2)
+                //    return GameResult.Tie;
+                //else if (MyProb2 >= MyProbT && MyProb2 >= MyProb1)
+                //    return GameResult.T2;
+
+                if (MyProb1 >= MyProb2 + 0.03)
+                    return GameResult.T1;
+
+                else
+                    return GameResult.T2;
+
+                throw new Exception();
+            }
+        }
+
+        public double BookieCorrect
+        {
+            get
+            {
+                if (BookieProb1 >= BookieProbT && BookieProb1 >= BookieProb2)
+                    return Game.Winner == Team1 ? 1 : 0;
+                else if (BookieProbT >= BookieProb1 && BookieProbT >= BookieProb2)
+                    return Game.Winner == null ? 1 : 0;
+                else if (BookieProb2 >= BookieProbT && BookieProb2 >= BookieProb1)
+                    return Game.Winner == Team2 ? 1 : 0;
+
+                return 0;
+            }
+        }
+
+        public GameResult BookiResult
+        {
+            get
+            {
+                if (BookieProb1 >= BookieProbT && BookieProb1 >= BookieProb2)
+                    return GameResult.T1;
+                else if (BookieProbT >= BookieProb1 && BookieProbT >= BookieProb2)
+                    return GameResult.Tie;
+                else if (BookieProb2 >= BookieProbT && BookieProb2 >= BookieProb1)
+                    return GameResult.T2;
+
+                throw new Exception();
+            }
+        }
     }
 
     public class BetPot
