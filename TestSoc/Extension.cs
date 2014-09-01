@@ -130,5 +130,14 @@ namespace TestSoc
 
             return Factorial(a) / (Factorial(b) * Factorial(a - b));
         }
+
+        public static double NormalizeData(double value, double dataMin, double dataMax, double minBound, double maxBound)
+        {
+            double range = dataMax - dataMin;
+
+            var d1 = (value - dataMin) / range;
+            return (double)((1 - d1) * minBound + d1 * maxBound);
+        }
+
     }
 }

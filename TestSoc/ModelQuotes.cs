@@ -8,13 +8,13 @@ using LinqToExcel;
 
 namespace TestSoc
 {
-    public class QuotesModel
+    public class ModelQuotes
     {
-        public Model _model { get; set; }
+        public ModelGames _model { get; set; }
 
         public List<Quote> Quotes { get; set; }
 
-        public QuotesModel(Model model)
+        public ModelQuotes(ModelGames model)
         {
             this._model = model;
             Quotes = new List<Quote>();
@@ -22,11 +22,8 @@ namespace TestSoc
 
         public void LoadData()
         {
-            string file = Path.Combine(Environment.CurrentDirectory, "quote.xlsx");
-
+            string file = Path.Combine(Environment.CurrentDirectory, "DataAccess", "V1", "quote.xlsx");
             this.AddQuotes(file, 2013);
-
-
         }
 
         private void AddQuotes(string file, int year)
@@ -77,7 +74,7 @@ namespace TestSoc
 
             if (date == DateTime.MinValue)
             {
-                Console.WriteLine(); 
+                Console.WriteLine();
             }
 
             var Quote = new Quote
@@ -88,7 +85,7 @@ namespace TestSoc
                 Q1 = exQuote.Q1.ConvertToDouble(),
                 QT = exQuote.QT.ConvertToDouble(),
                 Q2 = exQuote.Q2.ConvertToDouble(),
-                Game = _model.Games.Where(a => a.Team1 == team1 && a.Team2 == team2 && a.Date > date.AddDays(-10) && a.Date < date.AddDays(10)).First()
+                Game = _model.Games.Where(a => a.HomeTeam == team1 && a.AwayTeam == team2 && a.Date > date.AddDays(-10) && a.Date < date.AddDays(10)).First()
             };
 
             Quotes.Add(Quote);
@@ -106,6 +103,7 @@ namespace TestSoc
             Dic.Add("Paris SG", "PSG");
             Dic.Add("St Etienne", "St. Etienne");
             Dic.Add("AC Ajaccio", "Ajaccio");
+            Dic.Add("Evian TG", "Evian Thonon Gaillard"); 
         }
 
         private static TeamNameMapping instance;
@@ -123,5 +121,14 @@ namespace TestSoc
                 return instance;
             }
         }
+    }
+
+    public class ExcelQuote
+    {
+        public String Date { get; set; }
+        public String Teams { get; set; }
+        public String Q1 { get; set; }
+        public String QT { get; set; }
+        public String Q2 { get; set; }
     }
 }

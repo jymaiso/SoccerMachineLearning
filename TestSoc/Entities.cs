@@ -8,7 +8,7 @@ namespace TestSoc
 {
     public enum GameResult
     {
-        T1, T2, Tie
+        HomeWin, AwayWin, Draw
 
     }
 
@@ -18,14 +18,7 @@ namespace TestSoc
 
     }
 
-    public class ExcelGame
-    {
-        public String Date { get; set; }
-        public String Team1 { get; set; }
-        public String Team2 { get; set; }
-        public String Score { get; set; }
 
-    }
     public class Team
     {
         public String Name { get; set; }
@@ -33,196 +26,258 @@ namespace TestSoc
 
         public List<TeamStats> StatsHistory { get; set; }
 
-        public List<int> YearsPlayed { get; set; }
+        public List<int> SeasonsPlayed { get; set; }
 
         public Team()
         {
             Games = new List<Game>();
             StatsHistory = new List<TeamStats>();
-            YearsPlayed = new List<int>();
+            SeasonsPlayed = new List<int>();
         }
 
-        internal void PlayThisYear(int year)
+        internal void PlayThisSeason(int year)
         {
-            if (!YearsPlayed.Contains(year))
-                YearsPlayed.Add(year);
+            if (!SeasonsPlayed.Contains(year))
+                SeasonsPlayed.Add(year);
         }
 
-        public bool HavePlayThatDateTime(DateTime date)
+        public bool HavePlayThatSeason(DateTime date)
         {
+            bool hasPlayed = false;
             if (date.Month > 6)
-                return YearsPlayed.Contains(date.Year);
+                hasPlayed = SeasonsPlayed.Contains(date.Year);
             else
-                return YearsPlayed.Contains(date.Year - 1);
+                hasPlayed = SeasonsPlayed.Contains(date.Year - 1);
+
+            return hasPlayed;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{0}", Name);
         }
     }
 
     public class Game
     {
+
+        #region Properties
+        public string Div { get; set; }
         public DateTime Date { get; set; }
 
-        public Team Team1 { get; set; }
-        public Team Team2 { get; set; }
+        public Team HomeTeam { get; set; }
+        public Team AwayTeam { get; set; }
 
-        public int Score1 { get; set; }
-        public int Score2 { get; set; }
-
-        public Team Winner { get; set; }
-
-
-
-        public GameResult Result
+        public Team Winner
         {
             get
             {
-
-                if (Winner == Team1)
-                    return TestSoc.GameResult.T1;
-                else if (Winner == Team2)
-                    return TestSoc.GameResult.T2;
-
-                return TestSoc.GameResult.Tie;
+                if (_Winner == null)
+                {
+                    switch (FTR)
+                    {
+                        case GameResult.HomeWin: return HomeTeam;
+                        case GameResult.AwayWin: return AwayTeam;
+                        default: return null;
+                    }
+                }
+                return _Winner;
             }
         }
+        private Team _Winner = null;
+
+        public GameResult FTR
+        {
+            get
+            {
+                if (_FTR == null)
+                {
+                    if (FTHG > FTAG)
+                        return TestSoc.GameResult.HomeWin;
+                    else if (FTHG < FTAG)
+                        return TestSoc.GameResult.AwayWin;
+
+                    return TestSoc.GameResult.Draw;
+                }
+                return (GameResult)_FTR;
+            }
+        }
+        private GameResult? _FTR = null;
+
+        public int FTHG { get; set; }
+        public int FTAG { get; set; }
+
+        public int HTHG { get; set; }
+        public int HTAG { get; set; }
+
+        public GameResult HTR
+        {
+            get
+            {
+                if (_HTR == null)
+                {
+                    if (HTHG > HTAG)
+                        return TestSoc.GameResult.HomeWin;
+                    else if (HTHG < HTAG)
+                        return TestSoc.GameResult.AwayWin;
+
+                    return TestSoc.GameResult.Draw;
+                }
+                return (GameResult)_HTR;
+            }
+        }
+        private GameResult? _HTR = null;
+
+        public int HS { get; set; }
+        public int AS { get; set; }
+        public int HST { get; set; }
+        public int AST { get; set; }
+        public int HF { get; set; }
+        public int AF { get; set; }
+        public int HC { get; set; }
+        public int AC { get; set; }
+        public int HY { get; set; }
+        public int AY { get; set; }
+        public int HR { get; set; }
+        public int AR { get; set; }
 
 
-        public TeamStats Stat1 { get; set; }
+        public TeamStats HomeStat { get; set; }
+        public TeamStats AwayStat { get; set; }
+        #endregion
 
-        public TeamStats Stat2 { get; set; }
+
 
         public Team GetOpositeTeam(Team team)
         {
-            if (Team1 == team)
-                return Team2;
+            if (HomeTeam == team)
+                return AwayTeam;
 
-            if (Team2 == team)
-                return Team1;
+            if (AwayTeam == team)
+                return HomeTeam;
 
             return null;
         }
 
         public TeamStats GetOpositeStat(Team team)
         {
-            if (Team1 == team)
-                return Stat2;
+            if (HomeTeam == team)
+                return AwayStat;
 
-            if (Team2 == team)
-                return Stat1;
+            if (AwayTeam == team)
+                return HomeStat;
 
             return null;
         }
 
         public TeamStats GetStat(Team team)
         {
-            if (Team1 == team)
-                return Stat1;
+            if (HomeTeam == team)
+                return HomeStat;
 
-            if (Team2 == team)
-                return Stat2;
+            if (AwayTeam == team)
+                return AwayStat;
 
             throw new Exception();
         }
 
         public int GetGoal(Team team)
         {
-            if (Team1 == team)
-                return Score1;
+            if (HomeTeam == team)
+                return FTHG;
 
-            if (Team2 == team)
-                return Score2;
+            if (AwayTeam == team)
+                return FTAG;
 
             throw new Exception();
         }
 
         public int GetOpositeGoal(Team team)
         {
-            if (Team1 == team)
-                return Score2;
+            if (HomeTeam == team)
+                return FTAG;
 
-            if (Team2 == team)
-                return Score1;
+            if (AwayTeam == team)
+                return FTHG;
 
             throw new Exception();
         }
 
+
+        public override string ToString()
+        {
+            return String.Format("{0} {1} {2}", Date.ToShortDateString(), HomeTeam.Name, AwayTeam.Name);
+        }
     }
 
     public class TeamStats
     {
-        public int GameCount { get; set; }
-        //public double Rank { get; set; }
         public Team Team { get; set; }
         public DateTime Date { get; set; }
-
-        public double Points { get; set; }
-
-        public double ProbTie { get; set; }
-
-        public double ProbWin { get; set; }
-
-        public double ProbLoose { get; set; }
-
-        public double ProbHomeTie { get; set; }
-
-        public double ProbHomeWin { get; set; }
-
-        public double ProbHomeLoose { get; set; }
-
-        public double ProbExtTie { get; set; }
-
-        public double ProbExtWin { get; set; }
-
-        public double ProbExtLoose { get; set; }
-
         public Game Game { get; set; }
 
-        public double ProbClearSheet { get; set; }
+        public double Home_Win { get; set; }
+        public double Home_Loose { get; set; }
+        public double Home_Draw { get; set; }
+        public double Home_FTHG { get; set; }
+        public double Home_FTAG { get; set; }
+        public double Home_HTHG { get; set; }
+        public double Home_HTAG { get; set; }
+        public double Home_HS { get; set; }
+        public double Home_AS { get; set; }
+        public double Home_HST { get; set; }
+        public double Home_AST { get; set; }
+        public double Home_HF { get; set; }
+        public double Home_AF { get; set; }
+        public double Home_HC { get; set; }
+        public double Home_AC { get; set; }
+        public double Home_HY { get; set; }
+        public double Home_AY { get; set; }
+        public double Home_HR { get; set; }
+        public double Home_AR { get; set; }
 
-        public double ProbGoal { get; set; }
-
-        public double ProbOpositeGoal { get; set; }
-
-        public double ProbDiffGoal { get; set; }
-
-        public double ProbHomeClearSheet { get; set; }
-
-        public double ProbHomeGoal { get; set; }
-
-        public double ProbHomeOpositeGoal { get; set; }
-
-        public double ProbHomeDiffGoal { get; set; }
-
-        public double ProbExtClearSheet { get; set; }
-
-        public double ProbExtGoal { get; set; }
-
-        public double ProbExtOpositeGoal { get; set; }
-
-        public double ProbExtDiffGoal { get; set; }
+        public double Away_Win { get; set; }
+        public double Away_Loose { get; set; }
+        public double Away_Draw { get; set; }
+        public double Away_FTHG { get; set; }
+        public double Away_FTAG { get; set; }
+        public double Away_HTHG { get; set; }
+        public double Away_HTAG { get; set; }
+        public double Away_HS { get; set; }
+        public double Away_AS { get; set; }
+        public double Away_HST { get; set; }
+        public double Away_AST { get; set; }
+        public double Away_HF { get; set; }
+        public double Away_AF { get; set; }
+        public double Away_HC { get; set; }
+        public double Away_AC { get; set; }
+        public double Away_HY { get; set; }
+        public double Away_AY { get; set; }
+        public double Away_HR { get; set; }
+        public double Away_AR { get; set; }
 
 
+
+
+
+        public override string ToString()
+        {
+            return String.Format("{0} {1}", Date.ToShortDateString(), Team.Name);
+        }
     }
 
     public class Parameters
     {
         public IFunction Function { get; set; }
         public int GameCount { get; set; }
-        public bool EnableStrongWeakOpposite { get; set; }
 
         public Parameters()
         {
-            EnableStrongWeakOpposite = true;
+
         }
     }
 
-    public class ExcelQuote
-    {
-        public String Date { get; set; }
-        public String Teams { get; set; }
-        public String Q1 { get; set; }
-        public String QT { get; set; }
-        public String Q2 { get; set; }
-    }
+
 
     public class Quote
     {
@@ -268,9 +323,13 @@ namespace TestSoc
         }
         private TeamStats _s2;
 
-        private double P1 { get { return (Stat1.ProbHomeWin + Stat2.ProbExtLoose) / 2; } }
-        private double PT { get { return (Stat1.ProbHomeTie + Stat2.ProbExtTie) / 2; } }
-        private double P2 { get { return (Stat2.ProbExtWin + Stat1.ProbHomeLoose) / 2; } }
+        //private double P1 { get { return (Stat1.Home_Win + Stat2.Away_Loose) / 2; } }
+        //private double PT { get { return (Stat1.Home_Draw + Stat2.Away_Draw) / 2; } }
+        //private double P2 { get { return (Stat2.Away_Win + Stat1.Home_Loose) / 2; } }
+
+        private double P1 { get { return (Stat1.Home_HST ) ; } }
+        private double PT { get { return (Stat1.Home_Draw + Stat2.Away_Draw) / 2; } }
+        private double P2 { get { return (Stat2.Away_AST ) ; } }
 
         //private double P1 { get { return (Stat1.ProbWin) ; } }
         //private double PT { get { return (Stat1.ProbTie + Stat2.ProbTie) / 2; } }
@@ -284,9 +343,9 @@ namespace TestSoc
         public double MyProbT { get { return PT / TotalP; } }
         public double MyProb2 { get { return P2 / TotalP; } }
 
-        public int ActualProb1 { get { return Game.Result == GameResult.T1 ? 1 : 0; } }
-        public int ActualProbT { get { return Game.Result == GameResult.Tie ? 1 : 0; } }
-        public int ActualProb2 { get { return Game.Result == GameResult.T2 ? 1 : 0; } }
+        public int ActualProb1 { get { return Game.FTR == GameResult.HomeWin ? 1 : 0; } }
+        public int ActualProbT { get { return Game.FTR == GameResult.Draw ? 1 : 0; } }
+        public int ActualProb2 { get { return Game.FTR == GameResult.AwayWin ? 1 : 0; } }
 
         public double BookieProb1 { get { return 1 / Q1 / TotalQ; } }
         public double BookieProbT { get { return 1 / QT / TotalQ; } }
@@ -295,6 +354,7 @@ namespace TestSoc
         public double MyMSE { get { return 1 / (double)3 * (Math.Pow(MyProb1 - ActualProb1, 2) + Math.Pow(MyProbT - ActualProbT, 2) + Math.Pow(MyProb2 - ActualProb2, 2)); } }
         public double BookieMSE { get { return 1 / (double)3 * (Math.Pow(BookieProb1 - ActualProb1, 2) + Math.Pow(BookieProbT - ActualProbT, 2) + Math.Pow(BookieProb2 - ActualProb2, 2)); } }
         public double RandomMSE { get { return 1 / (double)3 * (Math.Pow(0.333333 - ActualProb1, 2) + Math.Pow(0.333333 - ActualProbT, 2) + Math.Pow(0.333333 - ActualProb2, 2)); } }
+        public double HomeWinMSE { get { return 1 / (double)3 * (Math.Pow(0.47 - ActualProb1, 2) + Math.Pow(0.29 - ActualProbT, 2) + Math.Pow(0.24 - ActualProb2, 2)); } }
 
         public double MyCorrect
         {
@@ -302,11 +362,11 @@ namespace TestSoc
             {
                 switch (MyResult)
                 {
-                    case GameResult.T1:
+                    case GameResult.HomeWin:
                         return Game.Winner == Team1 ? 1 : 0;
-                    case GameResult.T2:
+                    case GameResult.AwayWin:
                         return Game.Winner == Team2 ? 1 : 0;
-                    case GameResult.Tie:
+                    case GameResult.Draw:
                         return Game.Winner == null ? 1 : 0;
                     default:
                         break;
@@ -349,10 +409,10 @@ namespace TestSoc
                 //    return GameResult.T2;
 
                 if (MyProb1 >= MyProb2 + 0.03)
-                    return GameResult.T1;
+                    return GameResult.HomeWin;
 
                 else
-                    return GameResult.T2;
+                    return GameResult.AwayWin;
 
                 throw new Exception();
             }
@@ -378,11 +438,11 @@ namespace TestSoc
             get
             {
                 if (BookieProb1 >= BookieProbT && BookieProb1 >= BookieProb2)
-                    return GameResult.T1;
+                    return GameResult.HomeWin;
                 else if (BookieProbT >= BookieProb1 && BookieProbT >= BookieProb2)
-                    return GameResult.Tie;
+                    return GameResult.Draw;
                 else if (BookieProb2 >= BookieProbT && BookieProb2 >= BookieProb1)
-                    return GameResult.T2;
+                    return GameResult.AwayWin;
 
                 throw new Exception();
             }

@@ -9,57 +9,86 @@ namespace TestSoc
 
     public interface IFunction
     {
-        double Y(double x);
+        double Y(int x);
+        double Sum(int x);
     }
 
-    public class ConstantFunction : IFunction
+    public abstract class BaseFunction
     {
-        public double Y(double x)
+        protected Dictionary<int, double> _values = new Dictionary<int, double>();
+
+        public double Sum(int x)
+        {
+            double sum = 0;
+            for (int i = 1; i <= x; i++)
+            {
+                sum += Y(i);
+            }
+
+            return sum;
+        }
+
+        public abstract double Y(int x);
+    }
+
+    public class ConstantFunction : BaseFunction, IFunction
+    {
+        public override double Y(int x)
         {
             return 1;
         }
     }
 
-    public class LinearFunction : IFunction
+    public class LinearFunction : BaseFunction, IFunction
     {
-        private int p;
+        private double p;
 
-        public LinearFunction(int p)
+        public LinearFunction(double p)
         {
             this.p = p;
         }
-        public double Y(double x)
+
+        public override double Y(int x)
         {
-            return p * x;
+            if (!_values.ContainsKey(x))
+                _values.Add(x, p * x);
+
+            return _values[x];
         }
     }
 
-    public class LogFunction : IFunction
+    public class LogFunction : BaseFunction, IFunction
     {
-        public double Y(double x)
+        public override double Y(int x)
         {
-            return Math.Log(x + 1);
+            if (!_values.ContainsKey(x))
+                _values.Add(x, Math.Log(x + 1));
+
+            return _values[x];
         }
     }
 
-    public class ExpFunction : IFunction
+    public class PowFunction : BaseFunction, IFunction
     {
-        private int p;
+        private double p;
 
-        public ExpFunction()
+        public PowFunction()
         {
             // TODO: Complete member initialization
             this.p = 2;
         }
 
-        public ExpFunction(int p)
+        public PowFunction(double p)
         {
             // TODO: Complete member initialization
             this.p = p;
         }
-        public double Y(double x)
+        public override double Y(int x)
         {
-            return Math.Pow(x, p);
+            if (!_values.ContainsKey(x))
+                _values.Add(x, Math.Pow(x, p));
+
+            return _values[x];
         }
     }
 }
