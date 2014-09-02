@@ -42,11 +42,11 @@ namespace ZedGraphPlot
                 GameCount = 38,
             });
 
-            int index = DisplayCache(Cache0, "PSG", "PSG", "Points", Color.Red);
-            index = DisplayCache(Cache0, "Auxerre", "Auxerre", "Points", Color.Green);
-            index = DisplayCache(Cache0, "Guingamp", "Guingamp", "Points", Color.Gray);
-            index = DisplayCache(Cache0, "Lorient", "Lorient", "Points", Color.Blue);
-            index = DisplayCache(Cache0, "Sochaux", "Sochaux", "Points", Color.Purple);
+            int index = DisplayCache(Cache0, "Paris SG", "Paris SG", "JPoints", Color.Red);
+            index = DisplayCache(Cache0, "Auxerre", "Auxerre", "JPoints", Color.Green);
+            index = DisplayCache(Cache0, "Guingamp", "Guingamp", "JPoints", Color.Gray);
+            index = DisplayCache(Cache0, "Lorient", "Lorient", "JPoints", Color.Blue);
+            index = DisplayCache(Cache0, "Sochaux", "Sochaux", "JPoints", Color.Purple);
 
             zedGraphControl1.AxisChange();
         }

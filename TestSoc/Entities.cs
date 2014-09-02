@@ -141,6 +141,15 @@ namespace TestSoc
         public int HR { get; set; }
         public int AR { get; set; }
 
+        public int Home_Score { get { return (FTR == GameResult.HomeWin) ? 1 : (FTR == GameResult.AwayWin) ? -1 : 0; } }
+        public int Home_Win { get { return (FTR == GameResult.HomeWin) ? 1 : 0; } }
+        public int Home_Loose { get { return (FTR == GameResult.AwayWin) ? 1 : 0; } }
+        public int Home_Draw { get { return (FTR == GameResult.Draw) ? 1 : 0; } }
+
+        public int Away_Score { get { return (FTR == GameResult.AwayWin) ? 1 : (FTR == GameResult.HomeWin) ? -1 : 0; } }
+        public int Away_Win { get { return (FTR == GameResult.AwayWin) ? 1 : 0; } }
+        public int Away_Loose { get { return (FTR == GameResult.HomeWin) ? 1 : 0; } }
+        public int Away_Draw { get { return (FTR == GameResult.Draw) ? 1 : 0; } }
 
         public TeamStats HomeStat { get; set; }
         public TeamStats AwayStat { get; set; }
@@ -216,6 +225,8 @@ namespace TestSoc
         public DateTime Date { get; set; }
         public Game Game { get; set; }
 
+        public double JPoints { get; set; }
+
         public double Home_Win { get; set; }
         public double Home_Loose { get; set; }
         public double Home_Draw { get; set; }
@@ -257,7 +268,10 @@ namespace TestSoc
         public double Away_AR { get; set; }
 
 
-
+        public TeamStats()
+        {
+            JPoints = 0;
+        }
 
 
         public override string ToString()
@@ -327,9 +341,15 @@ namespace TestSoc
         //private double PT { get { return (Stat1.Home_Draw + Stat2.Away_Draw) / 2; } }
         //private double P2 { get { return (Stat2.Away_Win + Stat1.Home_Loose) / 2; } }
 
-        private double P1 { get { return (Stat1.Home_HST ) ; } }
-        private double PT { get { return (Stat1.Home_Draw + Stat2.Away_Draw) / 2; } }
-        private double P2 { get { return (Stat2.Away_AST ) ; } }
+        private double P1
+        {
+            get
+            {
+                return (Stat1.JPoints);
+            }
+        }
+        private double PT { get { return 0; } }
+        private double P2 { get { return (Stat2.JPoints); } }
 
         //private double P1 { get { return (Stat1.ProbWin) ; } }
         //private double PT { get { return (Stat1.ProbTie + Stat2.ProbTie) / 2; } }
@@ -339,7 +359,13 @@ namespace TestSoc
 
         private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
 
-        public double MyProb1 { get { return P1 / TotalP; } }
+        public double MyProb1
+        {
+            get
+            {
+                return P1 / TotalP;
+            }
+        }
         public double MyProbT { get { return PT / TotalP; } }
         public double MyProb2 { get { return P2 / TotalP; } }
 
@@ -408,7 +434,7 @@ namespace TestSoc
                 //else if (MyProb2 >= MyProbT && MyProb2 >= MyProb1)
                 //    return GameResult.T2;
 
-                if (MyProb1 >= MyProb2 + 0.03)
+                if (MyProb1 * 2 >= MyProb2)
                     return GameResult.HomeWin;
 
                 else
