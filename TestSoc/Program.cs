@@ -22,21 +22,21 @@ namespace TestSoc
                 ModelQuotes qs = new ModelQuotes(model);
 
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     model.ProcessData(new Parameters
                     {
                         Function = new LinearFunction(2),
                         GameCount = 38,
                         x0 = 0,
-                        x1 = i*100,
-                        x2 = 0,
-                        x3 = 0,
-                        x4 = 0
+                        x1 = 226,
+                        x2 = 9,
+                        x3 = 1.3,
+                        x4 = -0.03,
+                        k = 0.2
                     });
-
                     qs.LoadData();
-
+                    OutputQuotes(qs);
 
                     Console.WriteLine(i + " : " + Math.Sqrt(qs.Quotes.Sum(a => a.MyMSE) / qs.Quotes.Count));
                 }

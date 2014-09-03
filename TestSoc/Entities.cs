@@ -378,9 +378,9 @@ namespace TestSoc
 
         private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
 
-        public double MyProb1 { get { return P1 / TotalP; } }
-        public double MyProbT { get { return PT / TotalP; } }
-        public double MyProb2 { get { return P2 / TotalP; } }
+        public double MyProb1 { get { return P1 / TotalP ; } }
+        public double MyProbT { get { return 0.25; } }
+        public double MyProb2 { get { return P2 / TotalP - 0.25; } }
 
         public int ActualProb1 { get { return Game.Home_Win; } }
         public int ActualProbT { get { return Game.Home_Draw; } }
