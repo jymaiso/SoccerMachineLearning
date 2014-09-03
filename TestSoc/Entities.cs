@@ -270,7 +270,7 @@ namespace TestSoc
 
         public TeamStats()
         {
-            JPoints = 0;
+            JPoints = 2000;
         }
 
 
@@ -287,8 +287,25 @@ namespace TestSoc
 
         public Parameters()
         {
-
+            x0 = 0.1;
+            x1 = 0.1;
+            x2 = 0.1;
+            x3 = 0.1;
+            x4 = 0.1;
+            k = 0.1;
         }
+
+        public double x0 { get; set; }
+
+        public double x1 { get; set; }
+
+        public double x2 { get; set; }
+
+        public double x3 { get; set; }
+
+        public double x4 { get; set; }
+
+        public double k { get; set; }
     }
 
 
@@ -341,13 +358,7 @@ namespace TestSoc
         //private double PT { get { return (Stat1.Home_Draw + Stat2.Away_Draw) / 2; } }
         //private double P2 { get { return (Stat2.Away_Win + Stat1.Home_Loose) / 2; } }
 
-        private double P1
-        {
-            get
-            {
-                return (Stat1.JPoints);
-            }
-        }
+        private double P1 { get { return (Stat1.JPoints); } }
         private double PT { get { return 0; } }
         private double P2 { get { return (Stat2.JPoints); } }
 
@@ -355,23 +366,25 @@ namespace TestSoc
         //private double PT { get { return (Stat1.ProbTie + Stat2.ProbTie) / 2; } }
         //private double P2 { get { return (Stat2.ProbWin); } }
 
-        private double TotalP { get { return (P1 + PT + P2); } }
-
-        private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
-
-        public double MyProb1
+        private double TotalP
         {
             get
             {
-                return P1 / TotalP;
+                if (_TotalP == null) _TotalP = (P1 + PT + P2);
+                return (double)_TotalP;
             }
         }
+        private double? _TotalP;
+
+        private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
+
+        public double MyProb1 { get { return P1 / TotalP; } }
         public double MyProbT { get { return PT / TotalP; } }
         public double MyProb2 { get { return P2 / TotalP; } }
 
-        public int ActualProb1 { get { return Game.FTR == GameResult.HomeWin ? 1 : 0; } }
-        public int ActualProbT { get { return Game.FTR == GameResult.Draw ? 1 : 0; } }
-        public int ActualProb2 { get { return Game.FTR == GameResult.AwayWin ? 1 : 0; } }
+        public int ActualProb1 { get { return Game.Home_Win; } }
+        public int ActualProbT { get { return Game.Home_Draw; } }
+        public int ActualProb2 { get { return Game.Away_Win; } }
 
         public double BookieProb1 { get { return 1 / Q1 / TotalQ; } }
         public double BookieProbT { get { return 1 / QT / TotalQ; } }

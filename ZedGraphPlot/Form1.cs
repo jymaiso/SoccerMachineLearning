@@ -40,6 +40,12 @@ namespace ZedGraphPlot
             {
                 Function = new ConstantFunction(),
                 GameCount = 38,
+                x0 = 0,
+                x1 = 226,
+                x2 = 9,
+                x3 = 1.3,
+                x4 = -0.03,
+                k = 0.2
             });
 
             int index = DisplayCache(Cache0, "Paris SG", "Paris SG", "JPoints", Color.Red);
@@ -48,10 +54,39 @@ namespace ZedGraphPlot
             index = DisplayCache(Cache0, "Lorient", "Lorient", "JPoints", Color.Blue);
             index = DisplayCache(Cache0, "Sochaux", "Sochaux", "JPoints", Color.Purple);
 
+            //ModelGames model = new ModelGames();
+            //ModelQuotes qs = new ModelQuotes(model);
+            //PointPairList sV0 = GetSerie("x1", Color.Red);
+
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    double val =  i *30;
+
+            //    model.ProcessData(new Parameters
+            //    {
+            //        Function = new LinearFunction(2),
+            //        GameCount = 38,
+            //        x0 = 0,
+            //        x1 = 226,
+            //        x2 = 9,
+            //        x3 = 1.3,
+            //        x4 = -0.03,
+            //        k = val
+            //    });
+
+            //    qs.LoadData();
+
+
+            //    sV0.Add(new PointPair(val, Math.Sqrt(qs.Quotes.Sum(a => a.MyMSE) / qs.Quotes.Count)));
+            //}
+
+
+
             zedGraphControl1.AxisChange();
+
         }
 
- 
+
         private void DisplayProba()
         {
             // ---------------------
@@ -122,6 +157,13 @@ namespace ZedGraphPlot
         {
             return new XDate(date.ToOADate());
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            // Application.DoEvents();
+        }
     }
+
 
 }

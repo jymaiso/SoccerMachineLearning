@@ -19,22 +19,27 @@ namespace TestSoc
             Console.WriteLine("ExpFunction");
             {
                 ModelGames model = new ModelGames();
-
-                //for (int i = 10; i < 15; i++)
-                //{
-                model.ProcessData(new Parameters
-                {
-                    Function = new LinearFunction(2),
-                    GameCount = 38,
-
-                });
-
-                CSVFactory.GetCSV(model);
-                //}
-
                 ModelQuotes qs = new ModelQuotes(model);
-                qs.LoadData();
-                OutputQuotes(qs);
+
+
+                for (int i = 0; i < 50; i++)
+                {
+                    model.ProcessData(new Parameters
+                    {
+                        Function = new LinearFunction(2),
+                        GameCount = 38,
+                        x0 = 0,
+                        x1 = i*100,
+                        x2 = 0,
+                        x3 = 0,
+                        x4 = 0
+                    });
+
+                    qs.LoadData();
+
+
+                    Console.WriteLine(i + " : " + Math.Sqrt(qs.Quotes.Sum(a => a.MyMSE) / qs.Quotes.Count));
+                }
             }
 
             Console.WriteLine("end");

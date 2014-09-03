@@ -127,28 +127,26 @@ namespace TestSoc
                 }
             }
 
-            double x0 = 0.5;
-            double x1 = 2;
-            double x2 = 2;
-            double x3 = 0.5;
-            double x4 = 0.5;
-            double k = 40;
+
             int count = 0;
 
             foreach (var game in Games)
             {
                 count++;
-                var HomePreviousPoint = game.HomeTeam.StatsHistory.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Select(a => a.JPoints).FirstOrDefault();
-                var AwayPreviousPoint = game.AwayTeam.StatsHistory.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Select(a => a.JPoints).FirstOrDefault();
+                var HomePreviousStat = game.HomeTeam.StatsHistory.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).FirstOrDefault();
+                var AwayPreviousStat = game.AwayTeam.StatsHistory.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).FirstOrDefault();
+
+                var HomePreviousPoint = HomePreviousStat == null ? 2000 : HomePreviousStat.JPoints;
+                var AwayPreviousPoint = AwayPreviousStat == null ? 2000 : AwayPreviousStat.JPoints;
 
                 var HomeStronger = HomePreviousPoint - AwayPreviousPoint;
                 var AwayStronger = AwayPreviousPoint - HomePreviousPoint;
 
-                var HomePoints = x0 * AwayStronger + x1 * game.Home_Score + x2 * (game.FTHG - game.FTAG) + x3 * game.HS - x4 * game.AS;
-                var AwayPoints = x0 * HomeStronger + x1 * game.Away_Score + x2 * (game.FTAG - game.FTHG) + x3 * game.AS - x4 * game.HS;
+                var HomePoints = Parameters.x0 * AwayStronger + Parameters.x1 * game.Home_Score + Parameters.x2 * (game.FTHG - game.FTAG) + Parameters.x3 * game.HS - Parameters.x4 * game.AS;
+                var AwayPoints = Parameters.x0 * HomeStronger + Parameters.x1 * game.Away_Score + Parameters.x2 * (game.FTAG - game.FTHG) + Parameters.x3 * game.AS - Parameters.x4 * game.HS;
 
-                game.HomeStat.JPoints = ((k - 1) * HomePreviousPoint + HomePoints) / k;
-                game.AwayStat.JPoints = ((k - 1) * AwayPreviousPoint +  AwayPoints) / k;
+                game.HomeStat.JPoints = HomePreviousPoint + Parameters.k * HomePoints;
+                game.AwayStat.JPoints = AwayPreviousPoint + Parameters.k * AwayPoints;
             }
         }
 
