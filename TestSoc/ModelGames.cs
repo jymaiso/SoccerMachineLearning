@@ -92,6 +92,9 @@ namespace TestSoc
                             stat.Home_AY += g.AY * y;
                             stat.Home_HR += g.HR * y;
                             stat.Home_AR += g.AR * y;
+
+                            var HomePoints = Parameters.x1 * g.Home_Score + Parameters.x2 * (g.FTHG - g.FTAG) + Parameters.x3 * g.HS - Parameters.x4 * g.AS;
+                            stat.HomePoints += HomePoints * y;
                         });
                     }
 
@@ -122,11 +125,20 @@ namespace TestSoc
                             stat.Away_AY += g.AY * y;
                             stat.Away_HR += g.HR * y;
                             stat.Away_AR += g.AR * y;
+
+                            var AwayPoints = Parameters.x1 * g.Away_Score + Parameters.x2 * (g.FTAG - g.FTHG) + Parameters.x3 * g.AS - Parameters.x4 * g.HS;
+                            stat.AwayPoints += AwayPoints * y;
                         });
                     }
                 }
             }
 
+            var stats = Teams.SelectMany(a => a.StatsHistory).ToList();
+            var min = Math.Min(stats.Min(a => a.HomePoints), stats.Min(a => a.AwayPoints));
+            if (min < 0)
+            {
+                stats.ForEach(a => { a.HomePoints += -min; a.AwayPoints += -min; });
+            }
 
             int count = 0;
 

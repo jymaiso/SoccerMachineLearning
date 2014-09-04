@@ -278,6 +278,10 @@ namespace TestSoc
         {
             return String.Format("{0} {1}", Date.ToShortDateString(), Team.Name);
         }
+
+        public double HomePoints { get; set; }
+
+        public double AwayPoints { get; set; }
     }
 
     public class Parameters
@@ -358,9 +362,9 @@ namespace TestSoc
         //private double PT { get { return (Stat1.Home_Draw + Stat2.Away_Draw) / 2; } }
         //private double P2 { get { return (Stat2.Away_Win + Stat1.Home_Loose) / 2; } }
 
-        private double P1 { get { return (Stat1.JPoints); } }
+        private double P1 { get { return (Stat1.HomePoints); } }
         private double PT { get { return 0; } }
-        private double P2 { get { return (Stat2.JPoints); } }
+        private double P2 { get { return (Stat2.AwayPoints); } }
 
         //private double P1 { get { return (Stat1.ProbWin) ; } }
         //private double PT { get { return (Stat1.ProbTie + Stat2.ProbTie) / 2; } }
@@ -378,7 +382,7 @@ namespace TestSoc
 
         private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
 
-        public double MyProb1 { get { return P1 / TotalP ; } }
+        public double MyProb1 { get { return P1 / TotalP; } }
         public double MyProbT { get { return 0.25; } }
         public double MyProb2 { get { return P2 / TotalP - 0.25; } }
 
