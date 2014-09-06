@@ -18,28 +18,30 @@ namespace TestSoc
         {
             this._model = model;
             Quotes = new List<Quote>();
+
+            string file = Path.Combine(Environment.CurrentDirectory, "DataAccess", "V1", "quote.xlsx");
+            var excel = new ExcelQueryFactory(file);
+             _ExcelQuotes = (from c in excel.Worksheet<ExcelQuote>(String.Format("{0}_{1}", 2013, 2013 + 1))
+                      select c).ToList();
         }
+
+        private List<ExcelQuote> _ExcelQuotes;
 
         public void LoadData()
         {
-            string file = Path.Combine(Environment.CurrentDirectory, "DataAccess", "V1", "quote.xlsx");
-            this.AddQuotes(file, 2013);
+            Quotes.Clear();
+            this.AddQuotes( );
         }
 
-        private void AddQuotes(string file, int year)
+        private void AddQuotes( )
         {
-            var excel = new ExcelQueryFactory(file);
-            var qs = from c in excel.Worksheet<ExcelQuote>(String.Format("{0}_{1}", year, year + 1))
-                     select c;
-
-
-            foreach (var q in qs)
+            foreach (var q in _ExcelQuotes)
             {
-                AddQuote(q, year);
+                AddQuote(q);
             }
         }
 
-        private void AddQuote(ExcelQuote exQuote, int year)
+        private void AddQuote(ExcelQuote exQuote)
         {
 
             String team1Str = exQuote.Teams.Substring(0, exQuote.Teams.IndexOf("-") - 1).Trim();
@@ -51,10 +53,7 @@ namespace TestSoc
                 team1Str = TeamNameMapping.Instance.Dic[team1Str];
 
                 team1 = _model.Teams.Where(a => a.Name.ToLower() == team1Str.ToLower().Trim()).FirstOrDefault();
-                if (team1 == null)
-                {
-                    throw new Exception("Unknown team");
-                }
+                if (team1 == null) throw new Exception("Unknown team");
             }
 
 
@@ -64,18 +63,10 @@ namespace TestSoc
                 team2Str = TeamNameMapping.Instance.Dic[team2Str];
 
                 team2 = _model.Teams.Where(a => a.Name.ToLower() == team2Str.ToLower().Trim()).FirstOrDefault();
-                if (team2 == null)
-                {
-                    throw new Exception("Unknown team");
-                }
+                if (team2 == null) throw new Exception("Unknown team");
             }
 
             var date = Convert.ToDateTime(exQuote.Date);
-
-            if (date == DateTime.MinValue)
-            {
-                Console.WriteLine();
-            }
 
             var Quote = new Quote
             {
@@ -85,7 +76,7 @@ namespace TestSoc
                 Q1 = exQuote.Q1.ConvertToDouble(),
                 QT = exQuote.QT.ConvertToDouble(),
                 Q2 = exQuote.Q2.ConvertToDouble(),
-                Game = _model.Games.Where(a => a.HomeTeam == team1 && a.AwayTeam == team2 && a.Date > date.AddDays(-10) && a.Date < date.AddDays(10)).First()
+                Game = _model.Games.Where(a => a.HomeTeam == team1 && a.AwayTeam == team2 && a.Date == date).First()
             };
 
             Quotes.Add(Quote);

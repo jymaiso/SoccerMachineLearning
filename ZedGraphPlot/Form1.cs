@@ -33,25 +33,60 @@ namespace ZedGraphPlot
             // set X and Y axis titles
             myPane.XAxis.Title.Text = "X Axis";
             myPane.YAxis.Title.Text = "Y Axis";
-            myPane.XAxis.Type = AxisType.Date;
+            //myPane.XAxis.Type = AxisType.Date;
 
-            ModelGames Cache0 = new TestSoc.ModelGames();
-            Cache0.ProcessData(new Parameters
+            //ModelGames Cache0 = new TestSoc.ModelGames();
+            //Cache0.ProcessData(new Parameters
+            //{
+            //    Function = new LinearFunction(2),
+            //    GameCount = 174,
+
+            //    x1 = 1,
+            //    x2 = 1,
+            //    x3 = 1,
+            //    x4 = 1,
+
+            //});
+
+            //int index = DisplayCache(Cache0, "Paris SG", "Paris SG", "HomePoints", Color.Red);
+            //index = DisplayCache(Cache0, "Paris SG", "Paris SG", "AwayPoints", Color.Green);
+            //index = DisplayCache(Cache0, "Guingamp", "Guingamp", "HomePoints", Color.Gray);
+            //index = DisplayCache(Cache0, "Lorient", "Lorient", "HomePoints", Color.Blue);
+            //index = DisplayCache(Cache0, "Sochaux", "Sochaux", "HomePoints", Color.Purple);
+
+            ModelGames model = new ModelGames();
+            ModelQuotes qs = new ModelQuotes(model);
+            PointPairList sV0 = GetSerie("x1", Color.Red);
+
+            for (int i = 0; i < 100; i++)
             {
-                Function = new ConstantFunction(),
-                GameCount = 38,
-            });
+                double val = 2 + i * 1;
 
-            int index = DisplayCache(Cache0, "Paris SG", "Paris SG", "JPoints", Color.Red);
-            index = DisplayCache(Cache0, "Auxerre", "Auxerre", "JPoints", Color.Green);
-            index = DisplayCache(Cache0, "Guingamp", "Guingamp", "JPoints", Color.Gray);
-            index = DisplayCache(Cache0, "Lorient", "Lorient", "JPoints", Color.Blue);
-            index = DisplayCache(Cache0, "Sochaux", "Sochaux", "JPoints", Color.Purple);
+                model.ProcessData(new Parameters
+                {
+                    Function = new LinearFunction(2),
+                    GameCount = (int)val,
+
+                    x1 = -2,
+                    x2 = 0.8,
+                    x3 = 0.8,
+                    x4 = 1,
+
+                });
+
+                qs.LoadData();
+
+
+                sV0.Add(new PointPair(val, Math.Sqrt(qs.Quotes.Sum(a => a.MyMSE) / qs.Quotes.Count)));
+            }
+
+
 
             zedGraphControl1.AxisChange();
+
         }
 
- 
+
         private void DisplayProba()
         {
             // ---------------------
@@ -122,6 +157,13 @@ namespace ZedGraphPlot
         {
             return new XDate(date.ToOADate());
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            // Application.DoEvents();
+        }
     }
+
 
 }
