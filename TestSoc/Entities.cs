@@ -93,11 +93,16 @@ namespace TestSoc
                 if (_FTR == null)
                 {
                     if (FTHG > FTAG)
-                        return TestSoc.GameResult.HomeWin;
+                        _FTR = TestSoc.GameResult.HomeWin;
                     else if (FTHG < FTAG)
-                        return TestSoc.GameResult.AwayWin;
+                        _FTR = TestSoc.GameResult.AwayWin;
+                    else if (FTHG == FTAG)
+                        _FTR = TestSoc.GameResult.Draw;
+                    else
+                    {
+                        throw new Exception();
+                    }
 
-                    return TestSoc.GameResult.Draw;
                 }
                 return (GameResult)_FTR;
             }
@@ -141,12 +146,55 @@ namespace TestSoc
         public int HR { get; set; }
         public int AR { get; set; }
 
-        public int Home_Score { get { return (FTR == GameResult.HomeWin) ? 1 : (FTR == GameResult.AwayWin) ? -1 : 0; } }
+        public int Home_Score
+        {
+            get
+            {
+                if (_Home_Score == null)
+                {
+                    if (FTHG > FTAG)
+                        _Home_Score = 1;
+                    else if (FTHG < FTAG)
+                        _Home_Score = -1;
+                    else if (FTHG == FTAG)
+                        _Home_Score = 0;
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+                return (int)_Home_Score;
+            }
+        }
+        private int? _Home_Score;
+
+
+
         public int Home_Win { get { return (FTR == GameResult.HomeWin) ? 1 : 0; } }
         public int Home_Loose { get { return (FTR == GameResult.AwayWin) ? 1 : 0; } }
         public int Home_Draw { get { return (FTR == GameResult.Draw) ? 1 : 0; } }
 
-        public int Away_Score { get { return (FTR == GameResult.AwayWin) ? 1 : (FTR == GameResult.HomeWin) ? -1 : 0; } }
+        public int Away_Score
+        {
+            get
+            {
+                if (_Away_Score == null)
+                {
+                    if (FTHG < FTAG)
+                        _Away_Score = 1;
+                    else if (FTHG > FTAG)
+                        _Away_Score = -1;
+                    else if (FTHG == FTAG)
+                        _Away_Score = 0;
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+                return (int)_Away_Score;
+            }
+        }
+        private int? _Away_Score;
         public int Away_Win { get { return (FTR == GameResult.AwayWin) ? 1 : 0; } }
         public int Away_Loose { get { return (FTR == GameResult.HomeWin) ? 1 : 0; } }
         public int Away_Draw { get { return (FTR == GameResult.Draw) ? 1 : 0; } }
@@ -286,6 +334,8 @@ namespace TestSoc
 
     public class Parameters
     {
+        public static double DrawRatio { get; set; }
+
         public IFunction Function { get; set; }
         public int GameCount { get; set; }
 
@@ -382,9 +432,9 @@ namespace TestSoc
 
         private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
 
-        public double MyProb1 { get { return P1 / TotalP; } }
-        public double MyProbT { get { return 0.25; } }
-        public double MyProb2 { get { return P2 / TotalP - 0.25; } }
+        public double MyProb1 { get { return (P1 / TotalP); } }
+        public double MyProbT { get { return 0.28; } }
+        public double MyProb2 { get { return (P2 / TotalP); } }
 
         public int ActualProb1 { get { return Game.Home_Win; } }
         public int ActualProbT { get { return Game.Home_Draw; } }

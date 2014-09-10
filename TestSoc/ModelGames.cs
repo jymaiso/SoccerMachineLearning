@@ -160,6 +160,38 @@ namespace TestSoc
                 game.HomeStat.JPoints = HomePreviousPoint + Parameters.k * HomePoints;
                 game.AwayStat.JPoints = AwayPreviousPoint + Parameters.k * AwayPoints;
             }
+
+            foreach (var team in Teams)
+            {
+                foreach (var game in team.Games)
+                {
+                    var games = team.Games.Where(a => a.Date < game.Date).OrderByDescending(a => a.Date).Take(Parameters.GameCount).ToList();
+                    for (int i = 0; i < games.Count - 1; i++)
+                        if ((games[i].Date - games[i + 1].Date).TotalDays > 365)
+                        {
+                            games = games.Take(i + 1).ToList();
+                            break;
+                        }
+
+                    var homeGames = games.Where(a => a.HomeTeam == team).OrderBy(a => a.Date).ToList();
+                    var awayGames = games.Where(a => a.AwayTeam == team).OrderBy(a => a.Date).ToList();
+
+
+
+                    if (homeGames.Count > 0)
+                    {
+                        var sum = Parameters.Function.Sum(homeGames.Count);
+                        homeGames.ToList().ForEach(g =>
+                        {
+                            var index = homeGames.IndexOf(g);
+                            var y = Parameters.Function.Y(index) / sum;
+
+
+                        });
+                    }
+                }
+            }
+
         }
 
         private static TeamStats AddStats(Game game, Team team)

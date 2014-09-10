@@ -26,14 +26,13 @@ namespace TestSoc
                 {
                     model.ProcessData(new Parameters
                     {
-                        Function = new LinearFunction(2),
-                        GameCount = 38,
-                        x0 = 0,
-                        x1 = 226,
-                        x2 = 9,
-                        x3 = 1.3,
-                        x4 = -0.03,
-                        k = 0.2
+                        Function = new PowFunction(1.28),
+                        GameCount = (int)38,
+
+                        x1 = 7.8,
+                        x2 = 2.7,
+                        x3 = 1.2,
+                        x4 = 1.1,
                     });
                     qs.LoadData();
                     OutputQuotes(qs);
