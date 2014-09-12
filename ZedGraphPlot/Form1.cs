@@ -33,10 +33,11 @@ namespace ZedGraphPlot
             // set X and Y axis titles
             myPane.XAxis.Title.Text = "X Axis";
             myPane.YAxis.Title.Text = "Y Axis";
-            myPane.XAxis.Type = AxisType.Date;
+            //myPane.XAxis.Type = AxisType.Date;
 
-            ModelGames Cache0 = new TestSoc.ModelGames();
-            Cache0.ProcessData(new Parameters
+
+            ModelGames model = new TestSoc.ModelGames();
+            model.ProcessData(new Parameters
             {
                 Function = new PowFunction(1.28),
                 GameCount = (int)38,
@@ -48,18 +49,60 @@ namespace ZedGraphPlot
 
             });
 
-            int index = DisplayCache(Cache0, "Paris SG", "Paris SG", "HomePoints", Color.Red);
-            index = DisplayCache(Cache0, "Lyon", "Lyon", "HomePoints", Color.Gray);
-            index = DisplayCache(Cache0, "Rennes", "Rennes", "HomePoints", Color.Blue);
+            int freq = 200;
+            var diffs = model.Games.Select(a => new { Game = a, Diff = a.HomeStat.HomePoints - a.AwayStat.AwayPoints });
+            var min = diffs.Min(a => a.Diff);
+            var max = diffs.Max(a => a.Diff);
 
+            var interval = (max - min) / freq;
 
-            for (int i = 0; i < 10; i++)
+            PointPairList sAway = GetSerie("Away", Color.Red);
+            PointPairList sDraw = GetSerie("Draw", Color.Gray);
+            PointPairList sHome = GetSerie("Win", Color.Blue);
+            PointPairList sCount = GetSerie("Count", Color.Orange);
+
+            for (int i = 0; i < freq; i++)
             {
-                PointPairList sV0 = GetSerie("0", Color.LightGray);
-                sV0.Add(new PointPair(ConvertDateToXdate(new DateTime(2006 + i, 08, 01)), 20));
-                sV0.Add(new PointPair(ConvertDateToXdate(new DateTime(2006 + i, 08, 02)), 50));
+                var rMin = min + (i - 10) * interval;
+                var rMax = min + (i + 10) * interval;
+
+                var g = diffs.Where(a => a.Diff > rMin && a.Diff < rMax);
+
+                if (g.Count() > 10)
+                {
+                    sAway.Add(new PointPair(min + (i) * interval, g.Average(a => a.Game.Away_Win)));
+                    sDraw.Add(new PointPair(min + (i) * interval, g.Average(a => a.Game.Away_Draw)));
+                    sHome.Add(new PointPair(min + (i) * interval, g.Average(a => a.Game.Home_Win)));
+                    sCount.Add(new PointPair(min + (i) * interval, g.Count() / (double)1000));
+                }
             }
-          
+
+
+            //ModelGames Cache0 = new TestSoc.ModelGames();
+            //Cache0.ProcessData(new Parameters
+            //{
+            //    Function = new PowFunction(1.28),
+            //    GameCount = (int)38,
+
+            //    x1 = 7.8,
+            //    x2 = 2.7,
+            //    x3 = 1.2,
+            //    x4 = 1.1,
+
+            //});
+
+            //int index = DisplayCache(Cache0, "Paris SG", "Paris SG", "HomePoints", Color.Red);
+            //index = DisplayCache(Cache0, "Lyon", "Lyon", "HomePoints", Color.Gray);
+            //index = DisplayCache(Cache0, "Rennes", "Rennes", "HomePoints", Color.Blue);
+
+
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    PointPairList sV0 = GetSerie("0", Color.LightGray);
+            //    sV0.Add(new PointPair(ConvertDateToXdate(new DateTime(2006 + i, 08, 01)), 20));
+            //    sV0.Add(new PointPair(ConvertDateToXdate(new DateTime(2006 + i, 08, 02)), 50));
+            //}
+
 
 
 
