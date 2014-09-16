@@ -408,43 +408,82 @@ namespace TestSoc
         }
         private TeamStats _s2;
 
-        //private double P1 { get { return (Stat1.Home_Win + Stat2.Away_Loose) / 2; } }
-        //private double PT { get { return (Stat1.Home_Draw + Stat2.Away_Draw) / 2; } }
-        //private double P2 { get { return (Stat2.Away_Win + Stat1.Home_Loose) / 2; } }
 
-        private double P1 { get { return (Stat1.HomePoints); } }
-        private double PT { get { return 0; } }
-        private double P2 { get { return (Stat2.AwayPoints); } }
+       
 
-        //private double P1 { get { return (Stat1.ProbWin) ; } }
-        //private double PT { get { return (Stat1.ProbTie + Stat2.ProbTie) / 2; } }
-        //private double P2 { get { return (Stat2.ProbWin); } }
+        public double Diff
+        {
+            get
+            {
+                if (_diff == null)
+                    _diff = Stat1.HomePoints - Stat2.AwayPoints;
+                return (double)_diff;
+            }
+        }
+        private double? _diff;
+
+        public double PHome
+        {
+            get
+            {
+                if (_PHome == null)
+                    _PHome = 0.00009 * Math.Pow(Diff, 2) + 0.0127 * Diff + 0.3051;
+                return (double)_PHome;
+            }
+        }
+        private double? _PHome;
+
+        public double PDraw
+        {
+            get
+            {
+                if (_PDraw == null)
+                    _PDraw = -0.0004 * Math.Pow(Diff, 2) + 0.0063 * Diff + 0.2954;
+                return (double)_PDraw;
+            }
+        }
+        private double? _PDraw;
+
+        public double PAway
+        {
+            get
+            {
+                if (_PAway == null)
+                    _PAway = 0.0003 * Math.Pow(Diff, 2) - 0.0189 * Diff + 0.3995;
+                return (double)_PAway;
+            }
+        }
+        private double? _PAway;
+
+
+        //var yHome = 0.00009 * Math.Pow(x, 2) + 0.0127 * x + 0.3051;
+        //var yDraw = -0.0004 * Math.Pow(x, 2) + 0.0063 * x + 0.2954;
+        //var yAway = 0.0003 * Math.Pow(x, 2) - 0.0189 * x + 0.3995;
 
         private double TotalP
         {
             get
             {
-                if (_TotalP == null) _TotalP = (P1 + PT + P2);
+                if (_TotalP == null) _TotalP = (PHome + PDraw + PAway);
                 return (double)_TotalP;
             }
         }
         private double? _TotalP;
 
-        private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
-
-        public double MyProb1 { get { return (P1 / TotalP); } }
-        public double MyProbT { get { return 0.28; } }
-        public double MyProb2 { get { return (P2 / TotalP); } }
+        public double MyProbHome { get { return PHome / TotalP; } }
+        public double MyProbDraw { get { return PDraw / TotalP; } }
+        public double MyProbAway { get { return PAway / TotalP; } }
 
         public int ActualProb1 { get { return Game.Home_Win; } }
         public int ActualProbT { get { return Game.Home_Draw; } }
         public int ActualProb2 { get { return Game.Away_Win; } }
 
+        private double TotalQ { get { return (1 / Q1 + 1 / QT + 1 / Q2); } }
         public double BookieProb1 { get { return 1 / Q1 / TotalQ; } }
         public double BookieProbT { get { return 1 / QT / TotalQ; } }
         public double BookieProb2 { get { return 1 / Q2 / TotalQ; } }
 
-        public double MyMSE { get { return 1 / (double)3 * (Math.Pow(MyProb1 - ActualProb1, 2) + Math.Pow(MyProbT - ActualProbT, 2) + Math.Pow(MyProb2 - ActualProb2, 2)); } }
+        public double MyMSE { get { return 1 / (double)3 * (Math.Pow(MyProbHome - ActualProb1, 2) + Math.Pow(MyProbDraw - ActualProbT, 2) + Math.Pow(MyProbAway - ActualProb2, 2)); } }
         public double BookieMSE { get { return 1 / (double)3 * (Math.Pow(BookieProb1 - ActualProb1, 2) + Math.Pow(BookieProbT - ActualProbT, 2) + Math.Pow(BookieProb2 - ActualProb2, 2)); } }
         public double RandomMSE { get { return 1 / (double)3 * (Math.Pow(0.333333 - ActualProb1, 2) + Math.Pow(0.333333 - ActualProbT, 2) + Math.Pow(0.333333 - ActualProb2, 2)); } }
         public double HomeWinMSE { get { return 1 / (double)3 * (Math.Pow(0.47 - ActualProb1, 2) + Math.Pow(0.29 - ActualProbT, 2) + Math.Pow(0.24 - ActualProb2, 2)); } }
@@ -494,14 +533,9 @@ namespace TestSoc
         {
             get
             {
-                //if (MyProb1 >= MyProbT && MyProb1 >= MyProb2)
-                //    return GameResult.T1;
-                //else if (MyProbT >= MyProb1 && MyProbT >= MyProb2)
-                //    return GameResult.Tie;
-                //else if (MyProb2 >= MyProbT && MyProb2 >= MyProb1)
-                //    return GameResult.T2;
 
-                if (MyProb1 * 2 >= MyProb2)
+
+                if (MyProbHome *1.1 >= MyProbAway)
                     return GameResult.HomeWin;
 
                 else

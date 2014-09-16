@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -61,6 +63,18 @@ namespace ZedGraphPlot
             PointPairList sHome = GetSerie("Win", Color.Blue);
             PointPairList sCount = GetSerie("Count", Color.Orange);
 
+
+            var sb = new StringBuilder();
+
+            // First line contains field names
+
+            sb.Append(String.Join(";", new List<String> { "diff", "sAway", "sDraw", "sHome" }));
+            sb.AppendLine();
+
+
+
+
+
             for (int i = 0; i < freq; i++)
             {
                 var rMin = min + (i - 10) * interval;
@@ -70,12 +84,32 @@ namespace ZedGraphPlot
 
                 if (g.Count() > 10)
                 {
+                    double x = min + (i) * interval;
+                    var yHome = 0.00009 * Math.Pow(x, 2) + 0.0127 * x + 0.3051;
+                    var yDraw = -0.0004 * Math.Pow(x, 2) + 0.0063 * x + 0.2954;
+                    var yAway = 0.0003 * Math.Pow(x, 2) - 0.0189 * x + 0.3995;
+                    sCount.Add(new PointPair(min + (i) * interval, yHome + yDraw + yAway));
+
                     sAway.Add(new PointPair(min + (i) * interval, g.Average(a => a.Game.Away_Win)));
                     sDraw.Add(new PointPair(min + (i) * interval, g.Average(a => a.Game.Away_Draw)));
                     sHome.Add(new PointPair(min + (i) * interval, g.Average(a => a.Game.Home_Win)));
-                    sCount.Add(new PointPair(min + (i) * interval, g.Count() / (double)1000));
+                    //sCount.Add(new PointPair(min + (i) * interval, g.Count() / (double)1000));
+
+
+                    sb.Append((min + (i) * interval).ToString()).Append(';');
+                    sb.Append((g.Average(a => a.Game.Away_Win)).ToString()).Append(';');
+                    sb.Append((g.Average(a => a.Game.Away_Draw)).ToString()).Append(';');
+                    sb.Append((g.Average(a => a.Game.Home_Win)).ToString()).Append(';');
+                    sb.AppendLine();
                 }
             }
+
+            string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "data.csv");
+            File.WriteAllText(file, sb.ToString());
+            Process.Start(file);
+
+
+
 
 
             //ModelGames Cache0 = new TestSoc.ModelGames();

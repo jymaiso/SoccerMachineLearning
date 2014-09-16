@@ -106,9 +106,9 @@ namespace TestSoc
         {
             foreach (var quote in qs.Quotes)
             {
-                var F1 = (quote.MyProb1 * quote.Q1 - 1) / (quote.Q1 - 1);
-                var FT = (quote.MyProbT * quote.QT - 1) / (quote.QT - 1);
-                var F2 = (quote.MyProb2 * quote.Q2 - 1) / (quote.Q2 - 1);
+                var F1 = (quote.MyProbHome * quote.Q1 - 1) / (quote.Q1 - 1);
+                var FT = (quote.MyProbDraw * quote.QT - 1) / (quote.QT - 1);
+                var F2 = (quote.MyProbAway * quote.Q2 - 1) / (quote.Q2 - 1);
 
                 if (F1 > FT && F1 > F2)
                 {
